@@ -13,9 +13,18 @@ export async function chatWithUdine(
 	message: string
 ): Promise<string> {
 	const { text } = await generateText({
-		model: google.chat('gemini-2.5-flash'),
-		system: 'You are Udine, a conflict-resolution specialist.',
-		prompt: [...history, { role: 'user', content: message }]
+		model: google('gemini-2.0-flash-exp', {
+			apiKey: process.env.GOOGLE_GENAI_API_KEY,
+		}),
+		system: `You are Udine, an AI-mediated conflict resolution specialist. Your role is to:
+		- Help users navigate interpersonal disputes with empathy and understanding
+		- Facilitate communication between conflicting parties
+		- Provide structured guidance for conflict resolution
+		- Maintain neutrality while promoting mutual understanding
+		- Offer practical tools and insights for healthier interactions
+		
+		Keep responses conversational, supportive, and focused on resolution.`,
+		messages: [...history, { role: 'user', content: message }]
 	})
 	return text
 }

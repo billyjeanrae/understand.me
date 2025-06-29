@@ -55,7 +55,7 @@ export default function ConvAiDOMComponent({
 			return;
 		}
 		await conversation.startSession({
-			agentId: 'YOUR_AGENT_ID',
+			agentId: process.env.EXPO_PUBLIC_UDINE_AGENT_ID || 'YOUR_AGENT_ID',
 			dynamicVariables: { platform },
 			clientTools: { get_battery_level, change_brightness, flash_screen },
 		});

@@ -1,61 +1,46 @@
 import { create } from 'zustand';
-
-interface PersonalityAnswer {
-  question: string;
-  answer: string;
-}
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface OnboardingState {
-  // User details
-  name: string;
-  email: string;
-  
-  // Personality assessment
-  personalityAnswers: PersonalityAnswer[];
-  currentQuestionIndex: number;
-  
-  // Flow state
-  isVoiceActive: boolean;
-  currentStep: 'greeting' | 'name' | 'email' | 'password' | 'personality' | 'complete';
+  hasCompletedOnboarding: boolean;
+  microphonePermissionGranted: boolean;
   
   // Actions
-  setName: (name: string) => void;
-  setEmail: (email: string) => void;
-  addPersonalityAnswer: (question: string, answer: string) => void;
-  setCurrentStep: (step: OnboardingState['currentStep']) => void;
-  setVoiceActive: (active: boolean) => void;
-  nextQuestion: () => void;
+  completeOnboarding: () => void;
+  setMicrophonePermission: (granted: boolean) => void;
+  loadOnboardingStatus: () => Promise<void>;
   reset: () => void;
 }
 
-export const useOnboardingStore = create<OnboardingState>((set, get) => ({
-  name: '',
-  email: '',
-  personalityAnswers: [],
-  currentQuestionIndex: 0,
-  isVoiceActive: false,
-  currentStep: 'greeting',
+export const useOnboardingStore = create<OnboardingState>((set) => ({
+  hasCompletedOnboarding: false,
+  microphonePermissionGranted: false,
   
-  setName: (name) => set({ name }),
-  setEmail: (email) => set({ email }),
+  completeOnboarding: async () => {
+    await AsyncStorage.setItem('onboarding_completed', 'true');
+    set({ hasCompletedOnboarding: true });
+  },
   
-  addPersonalityAnswer: (question, answer) => set((state) => ({
-    personalityAnswers: [...state.personalityAnswers, { question, answer }]
-  })),
+  setMicrophonePermission: (granted: boolean) => {
+    set({ microphonePermissionGranted: granted });
+  },
   
-  setCurrentStep: (currentStep) => set({ currentStep }),
-  setVoiceActive: (isVoiceActive) => set({ isVoiceActive }),
+  loadOnboardingStatus: async () => {
+    try {
+      const completed = await AsyncStorage.getItem('onboarding_completed');
+      if (completed === 'true') {
+        set({ hasCompletedOnboarding: true });
+      }
+    } catch (error) {
+      console.error('Failed to load onboarding status:', error);
+    }
+  },
   
-  nextQuestion: () => set((state) => ({
-    currentQuestionIndex: state.currentQuestionIndex + 1
-  })),
-  
-  reset: () => set({
-    name: '',
-    email: '',
-    personalityAnswers: [],
-    currentQuestionIndex: 0,
-    isVoiceActive: false,
-    currentStep: 'greeting'
-  })
+  reset: async () => {
+    await AsyncStorage.removeItem('onboarding_completed');
+    set({
+      hasCompletedOnboarding: false,
+      microphonePermissionGranted: false,
+    });
+  },
 }));
