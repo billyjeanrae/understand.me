@@ -773,11 +773,19 @@ class MultiPartyConflictService {
 
     recentEmotions.forEach(moment => {
       Object.values(moment.participantEmotions).forEach(analysis => {
-        analysis.emotions.forEach(emotion => {
-          if (positiveEmotions.includes(emotion.name.toLowerCase())) {
-            positiveCount += emotion.score;
-          } else if (negativeEmotions.includes(emotion.name.toLowerCase())) {
-            negativeCount += emotion.score;
+        if (analysis.primaryEmotion) {
+          const emotion = analysis.primaryEmotion;
+          if (positiveEmotions.includes(emotion.emotion.toLowerCase())) {
+            positiveCount += emotion.confidence;
+          } else if (negativeEmotions.includes(emotion.emotion.toLowerCase())) {
+            negativeCount += emotion.confidence;
+          }
+        }
+        analysis.secondaryEmotions?.forEach(emotion => {
+          if (positiveEmotions.includes(emotion.emotion.toLowerCase())) {
+            positiveCount += emotion.confidence * 0.5; // Weight secondary emotions less
+          } else if (negativeEmotions.includes(emotion.emotion.toLowerCase())) {
+            negativeCount += emotion.confidence * 0.5;
           }
         });
       });

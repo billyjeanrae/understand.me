@@ -37,7 +37,8 @@ export default function RegisterScreen() {
   const { signup, isLoading } = useAuthStore();
 
   const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // More comprehensive email validation regex
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
     return emailRegex.test(email);
   };
 
@@ -93,7 +94,8 @@ export default function RegisterScreen() {
       // Navigate to onboarding flow
       router.replace('/(auth)/onboarding/welcome');
     } catch (error) {
-      Alert.alert('Registration Failed', 'Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Please try again.';
+      Alert.alert('Registration Failed', errorMessage);
     }
   };
 

@@ -12,6 +12,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { Mic, MessageCircle, Heart, CheckCircle } from 'lucide-react-native';
+import * as Permissions from 'expo-permissions';
 
 const { width } = Dimensions.get('window');
 
@@ -50,12 +51,25 @@ export default function OnboardingScreen() {
         setMicPermissionGranted(true);
         return true;
       } else {
-        // For mobile platforms, we'll handle this with expo-permissions
-        // For now, simulate permission granted
-        setMicPermissionGranted(true);
-        return true;
+        // Request microphone permission on mobile platforms
+        const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
+
+        if (status === 'granted') {
+          setMicPermissionGranted(true);
+          return true;
+        } else {
+          setMicPermissionGranted(false);
+          Alert.alert(
+            'Microphone Permission',
+            'Microphone access is needed for voice conversations. You can still use text chat without it.',
+            [{ text: 'OK' }]
+          );
+          return false;
+        }
       }
     } catch (error) {
+      console.error('Error requesting microphone permission:', error);
+      setMicPermissionGranted(false);
       Alert.alert(
         'Microphone Permission',
         'Microphone access is needed for voice conversations. You can still use text chat without it.',

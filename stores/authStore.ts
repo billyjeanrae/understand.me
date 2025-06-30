@@ -12,6 +12,7 @@ interface User {
   location?: string;
   personalityProfile?: Record<string, any>;
   onboardingComplete?: boolean;
+  profileSetupComplete?: boolean;
 }
 
 export interface OnboardingData {
@@ -28,7 +29,7 @@ interface AuthState {
   isLoading: boolean;
   isAuthenticated: boolean;
   onboardingData: OnboardingData;
-  
+
   // Actions
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, name: string) => Promise<void>;
@@ -38,6 +39,7 @@ interface AuthState {
   updateOnboardingData: (data: Partial<OnboardingData>) => void;
   completeOnboarding: () => Promise<void>;
   resetOnboarding: () => void;
+  completeProfileSetup: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -137,4 +139,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   resetOnboarding: () => set({
     onboardingData: { currentStep: 0 },
   }),
+
+  completeProfileSetup: async () => {
+    const { user } = get();
+    if (!user) return;
+
+    const updatedUser = {
+      ...user,
+      profileSetupComplete: true,
+    };
+
+    await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+    set({ user: updatedUser });
+  },
 }));

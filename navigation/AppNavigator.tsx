@@ -28,7 +28,7 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 export default function AppNavigator() {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
   const { hasCompletedOnboarding } = useOnboardingStore();
 
   return (
@@ -43,8 +43,10 @@ export default function AppNavigator() {
           // Auth flow
           <>
             <Stack.Screen name="Auth" component={AuthScreen} />
-            <Stack.Screen name="ProfileSetup" component={ProfileSetupScreen} />
           </>
+        ) : !user?.profileSetupComplete ? (
+          // Profile setup flow
+          <Stack.Screen name="ProfileSetup" component={ProfileSetupScreen} />
         ) : !hasCompletedOnboarding ? (
           // Onboarding flow
           <Stack.Screen name="Onboarding" component={OnboardingScreen} />
