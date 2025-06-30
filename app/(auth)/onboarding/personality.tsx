@@ -395,12 +395,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   assessmentTitle: {
-    ...Typography.heading.h2,
+    ...Typography.styles.h2,
     color: Colors.text.primary,
     marginBottom: Spacing.xs,
   },
   assessmentSubtitle: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.secondary,
     textAlign: 'center',
     lineHeight: 22,
@@ -415,12 +415,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   messageText: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.primary,
     lineHeight: 22,
   },
   speakerLabel: {
-    ...Typography.body.small,
+    ...Typography.styles.bodySmall,
     color: Colors.text.secondary,
     fontWeight: '600',
     marginLeft: Spacing.sm,
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   voiceInstructions: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.secondary,
     marginTop: Spacing.md,
     textAlign: 'center',
@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   progressText: {
-    ...Typography.body.small,
+    ...Typography.styles.bodySmall,
     color: Colors.text.secondary,
     marginBottom: Spacing.xs,
   },
@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   samplesTitle: {
-    ...Typography.heading.h3,
+    ...Typography.styles.h3,
     color: Colors.text.primary,
     marginBottom: Spacing.md,
   },
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   sampleItem: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.secondary,
     lineHeight: 22,
   },
@@ -481,12 +481,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   resultsTitle: {
-    ...Typography.heading.h2,
+    ...Typography.styles.h2,
     color: Colors.text.primary,
     marginBottom: Spacing.xs,
   },
   resultsSubtitle: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.secondary,
     textAlign: 'center',
     lineHeight: 22,
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border.light,
   },
   resultLabel: {
-    ...Typography.body.small,
+    ...Typography.styles.bodySmall,
     color: Colors.text.secondary,
     fontWeight: '600',
     marginBottom: Spacing.xs,
@@ -508,12 +508,12 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   resultValue: {
-    ...Typography.heading.h3,
+    ...Typography.styles.h3,
     color: Colors.text.primary,
     marginBottom: Spacing.xs,
   },
   resultDescription: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.secondary,
     lineHeight: 22,
   },
@@ -523,7 +523,7 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   eiScore: {
-    ...Typography.heading.h3,
+    ...Typography.styles.h3,
     color: Colors.primary.main,
     fontWeight: '700',
   },
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   traitText: {
-    ...Typography.body.small,
+    ...Typography.styles.bodySmall,
     color: Colors.primary.main,
     fontWeight: '600',
   },
@@ -559,7 +559,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   recommendationItem: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.secondary,
     lineHeight: 22,
   },
