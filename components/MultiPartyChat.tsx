@@ -242,7 +242,7 @@ export default function MultiPartyChat({
               </Text>
 
               {/* Emotion indicator */}
-              {message.emotionAnalysis && message.emotionAnalysis.primaryEmotion && (
+              {message.emotionAnalysis?.primaryEmotion && (
                 <View style={styles.emotionIndicator}>
                   <Text style={styles.emotionText}>
                     {message.emotionAnalysis.primaryEmotion.emotion}

@@ -127,7 +127,7 @@ export default function ParticipantInviteModal({
 
   const filteredContacts = contactSuggestions.filter(contact =>
     contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (contact.email && contact.email.toLowerCase().includes(searchQuery.toLowerCase()))
+    contact.email?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const resetForm = () => {

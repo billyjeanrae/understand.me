@@ -142,18 +142,18 @@ const styles = StyleSheet.create({
 
   // Sizes
   small: {
-    paddingVertical: Spacing.component.buttonPaddingVerticalSmall,
-    paddingHorizontal: Spacing.component.buttonPaddingHorizontalSmall,
+    paddingVertical: Spacing.padding.sm,
+    paddingHorizontal: Spacing.padding.md,
     minHeight: 36,
   },
   medium: {
-    paddingVertical: Spacing.component.buttonPaddingVertical,
-    paddingHorizontal: Spacing.component.buttonPaddingHorizontal,
+    paddingVertical: Spacing.padding.md,
+    paddingHorizontal: Spacing.padding.lg,
   },
   large: {
-    paddingVertical: Spacing.component.buttonPaddingVerticalLarge,
-    paddingHorizontal: Spacing.component.buttonPaddingHorizontalLarge,
-    minHeight: Spacing.component.touchTargetLarge,
+    paddingVertical: Spacing.padding.lg,
+    paddingHorizontal: Spacing.padding.xl,
+    minHeight: 56,
   },
 
   // Text styles
@@ -163,34 +163,42 @@ const styles = StyleSheet.create({
   },
   primaryText: {
     color: Colors.text.inverse,
-    ...Typography.styles.button,
+    fontSize: Typography.sizes.base,
   },
   secondaryText: {
     color: Colors.text.inverse,
-    ...Typography.styles.button,
+    fontSize: Typography.sizes.base,
+  },
+  therapeuticText: {
+    color: Colors.text.inverse,
+    fontSize: Typography.sizes.base,
+  },
+  supportiveText: {
+    color: Colors.text.inverse,
+    fontSize: Typography.sizes.base,
+  },
+  calmingText: {
+    color: Colors.primary[700],
+    fontSize: Typography.sizes.base,
   },
   outlineText: {
     color: Colors.primary[500],
-    ...Typography.styles.button,
+    fontSize: Typography.sizes.base,
   },
   ghostText: {
     color: Colors.primary[500],
-    ...Typography.styles.button,
-  },
-  dangerText: {
-    color: Colors.text.inverse,
-    ...Typography.styles.button,
+    fontSize: Typography.sizes.base,
   },
 
   // Size-specific text
   smallText: {
-    ...Typography.styles.buttonSmall,
+    fontSize: Typography.sizes.sm,
   },
   mediumText: {
-    ...Typography.styles.button,
+    fontSize: Typography.sizes.base,
   },
   largeText: {
-    ...Typography.styles.buttonLarge,
+    fontSize: Typography.sizes.lg,
   },
 
   // States
