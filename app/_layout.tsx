@@ -26,19 +26,53 @@ export default function RootLayout() {
   }, [fontsLoaded, fontError]);
 
   useEffect(() => {
-    // Check initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        router.replace('/(main)');
-      } else {
+    // Check initial session and onboarding status
+    const initializeApp = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session) {
+          // Check if user has completed onboarding
+          const { useOnboardingStore } = await import('../stores/onboardingStore');
+          const { hasCompletedOnboarding, loadOnboardingStatus } = useOnboardingStore.getState();
+          
+          await loadOnboardingStatus();
+          
+          if (hasCompletedOnboarding) {
+            router.replace('/(tabs)');
+          } else {
+            router.replace('/(onboarding)/welcome');
+          }
+        } else {
+          router.replace('/(auth)/login');
+        }
+      } catch (error) {
+        console.error('Failed to initialize app:', error);
         router.replace('/(auth)/login');
       }
-    });
+    };
+
+    initializeApp();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
-        router.replace('/(main)');
+        // Check onboarding status for authenticated users
+        try {
+          const { useOnboardingStore } = await import('../stores/onboardingStore');
+          const { hasCompletedOnboarding, loadOnboardingStatus } = useOnboardingStore.getState();
+          
+          await loadOnboardingStatus();
+          
+          if (hasCompletedOnboarding) {
+            router.replace('/(tabs)');
+          } else {
+            router.replace('/(onboarding)/welcome');
+          }
+        } catch (error) {
+          console.error('Failed to check onboarding status:', error);
+          router.replace('/(onboarding)/welcome');
+        }
       } else {
         router.replace('/(auth)/login');
       }
@@ -55,7 +89,9 @@ export default function RootLayout() {
     <>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(onboarding)" />
         <Stack.Screen name="(main)" />
+        <Stack.Screen name="(tabs)" />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="light" />
