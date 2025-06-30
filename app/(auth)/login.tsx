@@ -13,7 +13,8 @@ import { router } from 'expo-router';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react-native';
 
 import { ResponsiveLayout } from '../../components/layout/ResponsiveLayout';
-import { Card } from '../../components/ui/Card';
+import ScreenLayout from '../../components/layout/ScreenLayout';
+import TherapeuticCard from '../../components/ui/TherapeuticCard';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { useAuthStore } from '../../stores/authStore';
@@ -79,7 +80,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <ResponsiveLayout>
+    <ScreenLayout variant="calm" useSafeArea={true}>
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -91,11 +92,17 @@ export default function LoginScreen() {
           <View style={styles.header}>
             <Text style={styles.title}>Welcome Back</Text>
             <Text style={styles.subtitle}>
-              Sign in to continue your conflict resolution journey
+              Take a moment to reconnect with your journey toward understanding
             </Text>
           </View>
 
-          <Card style={styles.card}>
+          <TherapeuticCard
+            variant="calming"
+            elevation="subtle"
+            padding="large"
+            borderRadius="large"
+            style={styles.card}
+          >
             <View style={styles.form}>
               <Input
                 label="Email"
@@ -140,8 +147,11 @@ export default function LoginScreen() {
                 title="Sign In"
                 onPress={handleLogin}
                 loading={isLoading}
+                variant="therapeutic"
                 style={styles.loginButton}
                 fullWidth
+                accessibilityLabel="Sign in to your account"
+                accessibilityHint="Tap to sign in with your email and password"
               />
 
               <View style={styles.divider}>
@@ -153,11 +163,13 @@ export default function LoginScreen() {
               <Button
                 title="Create New Account"
                 onPress={handleSignUp}
-                variant="outline"
+                variant="calming"
                 fullWidth
+                accessibilityLabel="Create a new account"
+                accessibilityHint="Tap to start your journey with a new account"
               />
             </View>
-          </Card>
+          </TherapeuticCard>
 
           <View style={styles.footer}>
             <Text style={styles.footerText}>
@@ -166,7 +178,7 @@ export default function LoginScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </ResponsiveLayout>
+    </ScreenLayout>
   );
 }
 
@@ -191,13 +203,16 @@ const styles = StyleSheet.create({
     color: Colors.text.primary,
     textAlign: 'center',
     marginBottom: Spacing.sm,
+    fontWeight: '600', // Softer than bold for therapeutic feel
   },
-  
+
   subtitle: {
     ...Typography.styles.body,
     color: Colors.text.secondary,
     textAlign: 'center',
-    maxWidth: 300,
+    maxWidth: 320,
+    lineHeight: Typography.lineHeights.therapeutic,
+    letterSpacing: Typography.letterSpacing.therapeutic,
   },
   
   card: {
