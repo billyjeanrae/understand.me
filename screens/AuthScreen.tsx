@@ -8,8 +8,9 @@ import {
   SafeAreaView,
   Alert,
   Platform,
+  TouchableOpacity,
+  KeyboardAvoidingView,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthStore } from '../stores/authStore';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
@@ -31,7 +32,7 @@ export default function AuthScreen({ navigation }: Props) {
 
   const handleAuth = async () => {
     if (!email || !password || (!isLogin && !name)) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert('Please fill in all fields');
       return;
     }
 
@@ -44,9 +45,8 @@ export default function AuthScreen({ navigation }: Props) {
         navigation.navigate('ProfileSetup');
         return;
       }
-      // Navigation will be handled by AppNavigator based on auth state
     } catch (error) {
-      Alert.alert('Error', error instanceof Error ? error.message : 'Authentication failed');
+      Alert.alert('Authentication Failed', error instanceof Error ? error.message : 'An unknown error occurred.');
     } finally {
       setLoading(false);
     }
@@ -54,73 +54,80 @@ export default function AuthScreen({ navigation }: Props) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={['#0F172A', '#1E293B']} style={StyleSheet.absoluteFill} />
-      
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Understand.me</Text>
-          <Text style={styles.subtitle}>
-            AI-mediated conflict resolution for better relationships
-          </Text>
-        </View>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboardAvoidingView}
+      >
+        <View style={styles.content}>
+          <View style={styles.header}>
+            <Text style={styles.title}>Welcome to Understand.me</Text>
+            <Text style={styles.subtitle}>
+              Your space for guided conflict resolution.
+            </Text>
+          </View>
 
-        <View style={styles.form}>
-          {!isLogin && (
+          <View style={styles.form}>
+            {!isLogin && (
+              <TextInput
+                style={styles.input}
+                placeholder="Full Name"
+                placeholderTextColor="#A1A1AA"
+                value={name}
+                onChangeText={setName}
+                autoCapitalize="words"
+              />
+            )}
+            
             <TextInput
               style={styles.input}
-              placeholder="Full Name"
-              placeholderTextColor="#64748B"
-              value={name}
-              onChangeText={setName}
-              autoCapitalize="words"
+              placeholder="Email"
+              placeholderTextColor="#A1A1AA"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
             />
-          )}
-          
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#64748B"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#64748B"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+            
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor="#A1A1AA"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
 
-          <Pressable
-            style={[styles.button, loading && styles.buttonDisabled]}
-            onPress={handleAuth}
-            disabled={loading}
-          >
-            <Text style={styles.buttonText}>
-              {loading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Sign Up')}
-            </Text>
-          </Pressable>
+            <TouchableOpacity
+              style={[styles.button, loading && styles.buttonDisabled]}
+              onPress={handleAuth}
+              disabled={loading}
+            >
+              <Text style={styles.buttonText}>
+                {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
+              </Text>
+            </TouchableOpacity>
 
-          <Pressable
-            style={styles.switchButton}
-            onPress={() => setIsLogin(!isLogin)}
-          >
-            <Text style={styles.switchText}>
-              {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
-            </Text>
-          </Pressable>
+            <TouchableOpacity
+              style={styles.switchButton}
+              onPress={() => setIsLogin(!isLogin)}
+            >
+              <Text style={styles.switchText}>
+                {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Sign In'}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: '#F7F7F7',
+  },
+  keyboardAvoidingView: {
     flex: 1,
   },
   content: {
@@ -130,41 +137,42 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 48,
+    marginBottom: 40,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#F1F5F9',
-    marginBottom: 8,
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginBottom: 12,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#94A3B8',
+    fontSize: 18,
+    color: '#6B6B6B',
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: 26,
   },
   form: {
-    gap: 16,
+    gap: 20,
   },
   input: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    padding: 16,
+    paddingVertical: 18,
+    paddingHorizontal: 16,
     fontSize: 16,
-    color: '#F1F5F9',
+    color: '#1A1A1A',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: '#E5E5E5',
   },
   button: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#4A90E2',
     borderRadius: 12,
-    padding: 16,
+    padding: 18,
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 10,
   },
   buttonDisabled: {
-    opacity: 0.6,
+    backgroundColor: '#A1A1AA',
   },
   buttonText: {
     color: '#FFFFFF',
@@ -173,11 +181,11 @@ const styles = StyleSheet.create({
   },
   switchButton: {
     alignItems: 'center',
-    marginTop: 16,
+    marginTop: 20,
   },
   switchText: {
-    color: '#94A3B8',
+    color: '#4A90E2',
     fontSize: 14,
+    fontWeight: '500',
   },
 });
-

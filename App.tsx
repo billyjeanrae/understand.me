@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import AppNavigator from './navigation/AppNavigator';
 import { useAuthStore } from './stores/authStore';
 import { useOnboardingStore } from './stores/onboardingStore';
+import { useUserProfileStore } from './stores/userProfileStore';
 
 /**
  * Main App component that handles authentication state and navigation
@@ -10,6 +11,7 @@ import { useOnboardingStore } from './stores/onboardingStore';
 export default function App() {
   const { loadStoredAuth } = useAuthStore();
   const { loadOnboardingStatus } = useOnboardingStore();
+  const { initializeProfile } = useUserProfileStore();
 
   useEffect(() => {
     // Load stored authentication and onboarding status on app start
@@ -17,11 +19,12 @@ export default function App() {
       await Promise.all([
         loadStoredAuth(),
         loadOnboardingStatus(),
+        initializeProfile(),
       ]);
     };
 
     initializeApp();
-  }, [loadStoredAuth, loadOnboardingStatus]);
+  }, [loadStoredAuth, loadOnboardingStatus, initializeProfile]);
 
   return (
     <>
