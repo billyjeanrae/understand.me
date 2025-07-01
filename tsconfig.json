@@ -4,8 +4,8 @@
     "strict": true,
     "baseUrl": ".",
     "downlevelIteration": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
+    "jsx": "react-native",
+    "moduleResolution": "bundler",
     "paths": {
       "@/*": ["./*"]
     }

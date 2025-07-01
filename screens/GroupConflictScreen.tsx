@@ -39,7 +39,7 @@ import {
   ConflictParticipant,
   SessionPhase
 } from '../types/multiparty';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import { RootStackParamList } from '../navigation/types';
 import { multiPartyConflictService } from '../services/conflict/multiparty';
 import { groupMediationWorkflowService } from '../services/conflict/groupMediation';
 import MultiPartyChat from '../components/MultiPartyChat';
@@ -809,4 +809,3 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-

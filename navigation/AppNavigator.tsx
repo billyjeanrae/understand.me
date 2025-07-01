@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuthStore } from '../stores/authStore';
 import { useOnboardingStore } from '../stores/onboardingStore';
+import { RootStackParamList } from './types';
 
 // Screens
 import AuthScreen from '../screens/AuthScreen';
@@ -13,17 +14,6 @@ import ProfileSetupScreen from '../screens/ProfileSetupScreen';
 import ConflictDashboardScreen from '../screens/ConflictDashboardScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import GroupConflictScreen from '../screens/GroupConflictScreen';
-
-export type RootStackParamList = {
-  Auth: undefined;
-  ProfileSetup: undefined;
-  Onboarding: undefined;
-  Home: undefined;
-  Settings: undefined;
-  ConflictDashboard: undefined;
-  Profile: undefined;
-  GroupConflict: { conflictId?: string };
-};
 
 const Stack = createStackNavigator<RootStackParamList>();
 

@@ -12,7 +12,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthStore } from '../stores/authStore';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import { RootStackParamList } from '../navigation/types';
 
 type ProfileSetupNavigationProp = StackNavigationProp<RootStackParamList, 'ProfileSetup'>;
 
@@ -249,4 +249,3 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-
