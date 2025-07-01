@@ -4,13 +4,15 @@
   "main": "index.ts",
   "scripts": {
     "start": "expo start",
+    "dev": "expo start --dev-client",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build": "expo build",
-    "eject": "expo eject",
-    "test": "jest",
-    "lint": "eslint . --ext .ts,.tsx",
+    "build": "expo export --platform web",
+    "build:web": "expo export --platform web",
+    "preview": "npx serve dist",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
@@ -48,7 +50,7 @@
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "^4.11.1",
-    "react-native-svg": "15.8.0",
+    "react-native-svg": "15.11.2",
     "react-native-svg-web": "^1.0.9",
     "react-native-web": "^0.20.0",
     "react-native-webview": "13.13.5",
@@ -56,13 +58,24 @@
     "zustand": "^5.0.6"
   },
   "devDependencies": {
-    "@babel/core": "^7.25.2",
-    "@react-native/eslint-config": "^0.76.3",
-    "@types/react": "~18.3.12",
-    "@types/react-native": "^0.73.0",
+    "@babel/core": "^7.27.7",
+    "@react-native-community/eslint-config": "^3.2.0",
+    "@types/react": "~19.0.14",
+    "@typescript-eslint/eslint-plugin": "^8.35.1",
+    "@typescript-eslint/parser": "^8.35.1",
     "babel-plugin-module-resolver": "^5.0.2",
-    "eslint": "^9.17.0",
-    "typescript": "~5.7.2"
+    "eslint": "^8.57.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-native": "^5.0.0",
+    "typescript": "^5.8.3"
+  },
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "listUnknownPackages": false
+      }
+    }
   },
   "private": true
 }
