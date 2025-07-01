@@ -14,6 +14,8 @@ import ProfileSetupScreen from '../screens/ProfileSetupScreen';
 import ConflictDashboardScreen from '../screens/ConflictDashboardScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import GroupConflictScreen from '../screens/GroupConflictScreen';
+import ChatScreen from '../screens/ChatScreen';
+import ResourceLibraryScreen from '../screens/ResourceLibraryScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -45,6 +47,8 @@ export default function AppNavigator() {
             <Stack.Screen name="ConflictDashboard" component={ConflictDashboardScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
             <Stack.Screen name="GroupConflict" component={GroupConflictScreen} />
+            <Stack.Screen name="Chat" component={ChatScreen} />
+            <Stack.Screen name="ResourceLibrary" component={ResourceLibraryScreen} />
             <Stack.Screen name="Settings" component={SettingsScreen} />
           </>
         )}

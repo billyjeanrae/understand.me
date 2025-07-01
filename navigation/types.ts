@@ -7,4 +7,6 @@ export type RootStackParamList = {
   ConflictDashboard: undefined;
   Profile: undefined;
   GroupConflict: { conflictId?: string };
+  Chat: { sessionId?: string; conflictType?: string };
+  ResourceLibrary: undefined;
 };

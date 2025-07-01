@@ -6,8 +6,18 @@
     "downlevelIteration": true,
     "jsx": "react-native",
     "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "incremental": true,
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "maxNodeModuleJsDepth": 1,
     "paths": {
       "@/*": ["./*"]
     }
-  }
+  },
+  "exclude": [
+    "node_modules",
+    ".expo",
+    "dist",
+    ".tsbuildinfo"
+  ]
 }

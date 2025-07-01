@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, Platform, Alert, Pressable } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Brain, Settings, Target, User } from 'lucide-react-native';
+import { Brain, Settings, Target, User, MessageCircle, BookOpen } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/types';
@@ -62,6 +62,18 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Understand.me</Text>
         <View style={styles.headerButtons}>
+          <Pressable 
+            style={styles.headerButton} 
+            onPress={() => navigation.navigate('Chat', {})}
+          >
+            <MessageCircle size={20} color="#10B981" strokeWidth={2} />
+          </Pressable>
+          <Pressable 
+            style={styles.headerButton} 
+            onPress={() => navigation.navigate('ResourceLibrary')}
+          >
+            <BookOpen size={20} color="#8B5CF6" strokeWidth={2} />
+          </Pressable>
           <Pressable 
             style={styles.headerButton} 
             onPress={() => navigation.navigate('ConflictDashboard')}
