@@ -7,11 +7,12 @@ interface User {
   name: string;
   username?: string;
   bio?: string;
-  conflictStyle?: string;
-  goals?: string;
+  avatar?: string;
   location?: string;
+  createdAt?: string;
   personalityProfile?: Record<string, any>;
   onboardingComplete?: boolean;
+  profileSetupComplete?: boolean;
 }
 
 export interface OnboardingData {
@@ -20,7 +21,12 @@ export interface OnboardingData {
   confirmPassword?: string;
   location?: string;
   personalityAnswers?: Record<string, any>;
+  personalityProfile?: Record<string, any>;
   currentStep?: number;
+  voiceOnboardingSkipped?: boolean;
+  voiceOnboardingCompleted?: boolean;
+  personalityAssessmentSkipped?: boolean;
+  personalityAssessmentCompleted?: boolean;
 }
 
 interface AuthState {
@@ -28,7 +34,7 @@ interface AuthState {
   isLoading: boolean;
   isAuthenticated: boolean;
   onboardingData: OnboardingData;
-  
+
   // Actions
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, name: string) => Promise<void>;
@@ -38,6 +44,7 @@ interface AuthState {
   updateOnboardingData: (data: Partial<OnboardingData>) => void;
   completeOnboarding: () => Promise<void>;
   resetOnboarding: () => void;
+  completeProfileSetup: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -51,48 +58,66 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   login: async (email: string, password: string) => {
     set({ isLoading: true });
     try {
-      // Simulate API call - replace with actual authentication
+      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       const user: User = {
         id: '1',
         email,
-        name: email.split('@')[0], // Simple name extraction
+        name: email.split('@')[0],
+        createdAt: new Date().toISOString(),
       };
       
       await AsyncStorage.setItem('user', JSON.stringify(user));
-      set({ user, isAuthenticated: true, isLoading: false });
+      await AsyncStorage.setItem('isAuthenticated', 'true');
+      
+      set({ 
+        user, 
+        isAuthenticated: true, 
+        isLoading: false 
+      });
     } catch (error) {
       set({ isLoading: false });
-      throw new Error('Login failed');
+      throw error;
     }
   },
-  
+
   signup: async (email: string, password: string, name: string) => {
     set({ isLoading: true });
     try {
-      // Simulate API call - replace with actual authentication
+      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       const user: User = {
         id: Date.now().toString(),
         email,
         name,
+        createdAt: new Date().toISOString(),
       };
       
       await AsyncStorage.setItem('user', JSON.stringify(user));
-      set({ user, isAuthenticated: true, isLoading: false });
+      await AsyncStorage.setItem('isAuthenticated', 'true');
+      
+      set({ 
+        user, 
+        isAuthenticated: true, 
+        isLoading: false 
+      });
     } catch (error) {
       set({ isLoading: false });
-      throw new Error('Signup failed');
+      throw error;
     }
   },
-  
+
   logout: () => {
-    AsyncStorage.removeItem('user');
-    set({ user: null, isAuthenticated: false });
+    AsyncStorage.multiRemove(['user', 'isAuthenticated']);
+    set({ 
+      user: null, 
+      isAuthenticated: false,
+      onboardingData: { currentStep: 0 }
+    });
   },
-  
+
   updateProfile: async (profile: Partial<User>) => {
     const { user } = get();
     if (!user) return;
@@ -101,12 +126,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
     set({ user: updatedUser });
   },
-  
+
   loadStoredAuth: async () => {
     try {
-      const storedUser = await AsyncStorage.getItem('user');
-      if (storedUser) {
-        const user = JSON.parse(storedUser);
+      const [storedUser, isAuthenticated] = await AsyncStorage.multiGet([
+        'user',
+        'isAuthenticated'
+      ]);
+      
+      if (storedUser[1] && isAuthenticated[1] === 'true') {
+        const user = JSON.parse(storedUser[1]);
         set({ user, isAuthenticated: true });
       }
     } catch (error) {
@@ -115,7 +144,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
   
   updateOnboardingData: (data) => set((state) => ({
-    onboardingData: { ...state.onboardingData, ...data }
+    onboardingData: { ...state.onboardingData, ...data },
   })),
   
   completeOnboarding: async () => {
@@ -137,4 +166,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   resetOnboarding: () => set({
     onboardingData: { currentStep: 0 },
   }),
+
+  completeProfileSetup: async () => {
+    const { user } = get();
+    if (!user) return;
+    
+    const updatedUser = {
+      ...user,
+      profileSetupComplete: true,
+    };
+    
+    await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+    set({ user: updatedUser });
+  },
 }));
