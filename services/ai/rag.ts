@@ -1,5 +1,9 @@
-import { embedMany, cosineSimilarity } from '@ai-sdk/voyage';
-import { splitOnToken } from '../../utils/chunker';
+import { VoyageAIClient } from "voyageai";
+import { splitOnToken } from "../../utils/chunker";
+
+const voyageClient = new VoyageAIClient({
+  apiKey: process.env.VOYAGE_API_KEY || "",
+});
 
 let embeddings: number[][] = [];
 let chunks: string[] = [];
@@ -12,8 +16,29 @@ let chunks: string[] = [];
  * @param texts - An array of input texts to be processed and embedded
  */
 export async function loadCorpus(texts: string[]): Promise<void> {
-	chunks = texts.flatMap(t => splitOnToken(t, 500));
-embeddings = await embedMany({ model: 'voyage-2', inputs: chunks });
+  chunks = texts.flatMap((t) => splitOnToken(t, 500));
+
+  try {
+    const response = await voyageClient.embed({
+      input: chunks,
+      model: "voyage-2",
+    });
+    embeddings = response.data.map((item) => item.embedding);
+  } catch (error) {
+    console.error("Failed to generate embeddings:", error);
+    // Fallback to empty embeddings
+    embeddings = chunks.map(() => new Array(1024).fill(0));
+  }
+}
+
+/**
+ * Calculates cosine similarity between two vectors
+ */
+function cosineSimilarity(a: number[], b: number[]): number {
+  const dotProduct = a.reduce((sum, val, i) => sum + val * b[i], 0);
+  const magnitudeA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0));
+  const magnitudeB = Math.sqrt(b.reduce((sum, val) => sum + val * val, 0));
+  return dotProduct / (magnitudeA * magnitudeB);
 }
 
 /**
@@ -23,10 +48,26 @@ embeddings = await embedMany({ model: 'voyage-2', inputs: chunks });
  * @param topK - The number of most similar chunks to return (default is 3)
  * @returns An array of objects containing the most similar chunk and its similarity score, sorted in descending order by score
  */
-export async function findSimilar(query: string, topK = 3): Promise<{ chunk: string; score: number }[]> {
-	const qEmb = (await embedMany({ model: 'voyage-embed', inputs: [query] }))[0];
-	return chunks
-		.map((c, i) => ({ chunk: c, score: cosineSimilarity(qEmb, embeddings[i]) }))
-		.sort((a, b) => b.score - a.score)
-		.slice(0, topK);
+export async function findSimilar(
+  query: string,
+  topK = 3
+): Promise<{ chunk: string; score: number }[]> {
+  try {
+    const response = await voyageClient.embed({
+      input: [query],
+      model: "voyage-2",
+    });
+    const qEmb = response.data[0].embedding;
+
+    return chunks
+      .map((c, i) => ({
+        chunk: c,
+        score: cosineSimilarity(qEmb, embeddings[i]),
+      }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, topK);
+  } catch (error) {
+    console.error("Failed to find similar chunks:", error);
+    return [];
+  }
 }
