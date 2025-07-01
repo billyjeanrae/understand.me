@@ -97,7 +97,7 @@ class UserAnalyticsService {
     const skills: ConflictSkill[] = [
       'active_listening', 'empathy', 'communication', 'problem_solving',
       'emotional_regulation', 'perspective_taking', 'negotiation', 'compromise',
-      'boundary_setting', 'assertiveness', 'patience', 'forgiveness'
+      'boundary_setting', 'assertiveness', 'conflict_de_escalation', 'emotional_awareness'
     ];
 
     return skills.map(skill => ({
@@ -150,6 +150,11 @@ class UserAnalyticsService {
           family: 3.2,
           workplace: 1.8,
           neighbor: 2.8,
+          romantic: 3.5,
+          friendship: 2.2,
+          financial: 4.0,
+          parenting: 3.8,
+          caregiving: 3.0,
           other: 2.0
         }
       },

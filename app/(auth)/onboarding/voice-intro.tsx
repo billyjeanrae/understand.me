@@ -182,7 +182,7 @@ export default function VoiceIntroScreen() {
               <View style={styles.statusContainer}>
                 <View style={[
                   styles.statusDot, 
-                  { backgroundColor: conversationActive ? Colors.positive.primary : Colors.neutral.medium }
+                  { backgroundColor: conversationActive ? Colors.emotion.positive : Colors.emotion.neutral }
                 ]} />
                 <Text style={styles.statusText}>
                   {conversationActive ? 'Connected to Udine' : 'Connecting...'}
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   voiceSubtitle: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.secondary,
     textAlign: 'center',
     lineHeight: 22,
@@ -267,18 +267,18 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   messageBubble: {
-    backgroundColor: Colors.primary.light,
+    backgroundColor: Colors.primary[100],
     padding: Spacing.md,
     borderRadius: 16,
     marginBottom: Spacing.xs,
   },
   messageText: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.primary,
     lineHeight: 22,
   },
   speakerLabel: {
-    ...Typography.body.small,
+    ...Typography.styles.bodySmall,
     color: Colors.text.secondary,
     fontWeight: '600',
     marginLeft: Spacing.sm,
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   voiceInstructions: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.secondary,
     marginTop: Spacing.md,
     textAlign: 'center',
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   statusText: {
-    ...Typography.body.small,
+    ...Typography.styles.bodySmall,
     color: Colors.text.secondary,
   },
   benefitsCard: {
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   benefitText: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.secondary,
     flex: 1,
     lineHeight: 22,

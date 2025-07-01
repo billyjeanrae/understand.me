@@ -131,7 +131,13 @@ export default function PersonalityAssessmentScreen() {
           voiceEnabled: true,
           agentPersonality: 'empathetic',
           toolsEnabled: ['assessPersonality', 'updateUserProfile'],
-          userProfile: user
+          userProfile: user ? {
+            name: user.name,
+            username: user.username,
+            personalityProfile: user.personalityProfile,
+            conflictStyle: user.conflictStyle,
+            goals: user.goals
+          } : undefined
         }
       );
 
@@ -161,11 +167,8 @@ export default function PersonalityAssessmentScreen() {
       conversation?.startSession();
     } else {
       setIsListening(!isListening);
-      if (!isListening) {
-        conversation?.startRecording();
-      } else {
-        conversation?.stopRecording();
-      }
+      // Note: ElevenLabs conversation handles recording automatically
+      // when the session is active
     }
   };
 
@@ -174,7 +177,7 @@ export default function PersonalityAssessmentScreen() {
   };
 
   const handleSkip = () => {
-    updateOnboardingData({ personalityAssessmentSkipped: true });
+    updateOnboardingData({ personalityAssessmentCompleted: false });
     router.push('/(main)/dashboard');
   };
 
@@ -208,7 +211,6 @@ export default function PersonalityAssessmentScreen() {
           title="Personality Assessment"
           subtitle="Help us understand your communication style"
           onBack={() => router.back()}
-          onSkip={handleSkip}
         >
           <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
             {!assessmentComplete ? (
@@ -400,7 +402,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   assessmentSubtitle: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.secondary,
     textAlign: 'center',
     lineHeight: 22,
@@ -409,18 +411,18 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   messageBubble: {
-    backgroundColor: Colors.primary.light,
+    backgroundColor: Colors.primary[100],
     padding: Spacing.md,
     borderRadius: 16,
     marginBottom: Spacing.xs,
   },
   messageText: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.primary,
     lineHeight: 22,
   },
   speakerLabel: {
-    ...Typography.body.small,
+    ...Typography.styles.bodySmall,
     color: Colors.text.secondary,
     fontWeight: '600',
     marginLeft: Spacing.sm,
@@ -430,7 +432,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   voiceInstructions: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.secondary,
     marginTop: Spacing.md,
     textAlign: 'center',
@@ -439,20 +441,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   progressText: {
-    ...Typography.body.small,
+    ...Typography.styles.bodySmall,
     color: Colors.text.secondary,
     marginBottom: Spacing.xs,
   },
   progressBar: {
     width: '100%',
     height: 4,
-    backgroundColor: Colors.neutral.light,
+    backgroundColor: Colors.border.light,
     borderRadius: 2,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    backgroundColor: Colors.primary.main,
+    backgroundColor: Colors.primary[500],
     borderRadius: 2,
   },
   samplesCard: {
@@ -468,7 +470,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   sampleItem: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.secondary,
     lineHeight: 22,
   },
@@ -486,7 +488,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   resultsSubtitle: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.secondary,
     textAlign: 'center',
     lineHeight: 22,
@@ -500,7 +502,7 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border.light,
   },
   resultLabel: {
-    ...Typography.body.small,
+    ...Typography.styles.bodySmall,
     color: Colors.text.secondary,
     fontWeight: '600',
     marginBottom: Spacing.xs,
@@ -513,7 +515,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   resultDescription: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.secondary,
     lineHeight: 22,
   },
@@ -524,19 +526,19 @@ const styles = StyleSheet.create({
   },
   eiScore: {
     ...Typography.styles.h3,
-    color: Colors.primary.main,
+    color: Colors.primary[500],
     fontWeight: '700',
   },
   eiBar: {
     flex: 1,
     height: 8,
-    backgroundColor: Colors.neutral.light,
+    backgroundColor: Colors.border.light,
     borderRadius: 4,
     overflow: 'hidden',
   },
   eiFill: {
     height: '100%',
-    backgroundColor: Colors.primary.main,
+    backgroundColor: Colors.primary[500],
     borderRadius: 4,
   },
   traitsContainer: {
@@ -545,21 +547,21 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   traitTag: {
-    backgroundColor: Colors.primary.light,
+    backgroundColor: Colors.primary[100],
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: 16,
   },
   traitText: {
-    ...Typography.body.small,
-    color: Colors.primary.main,
+    ...Typography.styles.bodySmall,
+    color: Colors.primary[500],
     fontWeight: '600',
   },
   recommendationsList: {
     gap: Spacing.sm,
   },
   recommendationItem: {
-    ...Typography.body.medium,
+    ...Typography.styles.body,
     color: Colors.text.secondary,
     lineHeight: 22,
   },

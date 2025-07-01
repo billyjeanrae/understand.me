@@ -221,22 +221,4 @@ export function getSupportedLanguages(): string[] {
   ];
 }
 
-/**
- * Get supported languages for STT
- */
-export function getSupportedLanguages(): string[] {
-  return [
-    'en-US', // English (US)
-    'en-GB', // English (UK)
-    'es-ES', // Spanish (Spain)
-    'es-MX', // Spanish (Mexico)
-    'fr-FR', // French
-    'de-DE', // German
-    'it-IT', // Italian
-    'pt-BR', // Portuguese (Brazil)
-    'ja-JP', // Japanese
-    'ko-KR', // Korean
-    'zh-CN', // Chinese (Simplified)
-    'zh-TW', // Chinese (Traditional)
-  ];
-}
+

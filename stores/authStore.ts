@@ -20,6 +20,8 @@ export interface OnboardingData {
   confirmPassword?: string;
   location?: string;
   personalityAnswers?: Record<string, any>;
+  personalityProfile?: any;
+  personalityAssessmentCompleted?: boolean;
   currentStep?: number;
 }
 

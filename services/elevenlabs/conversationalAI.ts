@@ -76,7 +76,7 @@ export class ElevenLabsConversationalAI {
         onMessage: (message) => {
           console.log('💬 Udine Message:', message);
         },
-        onModeChange: (mode) => {
+        onModeChange: (mode: any) => {
           console.log('🔄 Conversation Mode:', mode);
         }
       });
@@ -366,14 +366,14 @@ export function useElevenLabsConversation(
       onDisconnect?.();
     },
     onError: (error) => {
-      console.error('❌ ElevenLabs Error:', error);
+      console.error('��� ElevenLabs Error:', error);
       onError?.(error);
     },
     onMessage: (message) => {
       console.log('💬 ElevenLabs Message:', message);
       onMessage?.(message);
     },
-    onModeChange: (mode) => {
+    onModeChange: (mode: any) => {
       console.log('🔄 Mode Change:', mode);
     }
   });

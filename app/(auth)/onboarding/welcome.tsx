@@ -60,7 +60,7 @@ export default function WelcomeScreen() {
 
           <View style={styles.feature}>
             <View style={styles.iconContainer}>
-              <Mic size={32} color={Colors.primary.main} />
+              <Mic size={32} color={Colors.primary[500]} />
             </View>
             <Text style={styles.featureTitle}>Voice-Guided Experience</Text>
             <Text style={styles.featureDescription}>
