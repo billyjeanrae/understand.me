@@ -396,6 +396,38 @@ export interface Database {
           updated_at?: string;
         };
       };
+
+      // Vector Embeddings for RAG
+      document_embeddings: {
+        Row: {
+          id: string;
+          content: string;
+          embedding: number[];
+          metadata: Record<string, any> | null;
+          source: string | null;
+          chunk_index: number | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          content: string;
+          embedding: number[];
+          metadata?: Record<string, any> | null;
+          source?: string | null;
+          chunk_index?: number | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          content?: string;
+          embedding?: number[];
+          metadata?: Record<string, any> | null;
+          source?: string | null;
+          chunk_index?: number | null;
+          updated_at?: string;
+        };
+      };
     };
     
     Views: {
@@ -475,3 +507,8 @@ export type UserAnalyticsUpdate = Database['public']['Tables']['user_analytics']
 // Dashboard and analytics types
 export type UserDashboardStats = Database['public']['Views']['user_dashboard_stats']['Row'];
 export type SessionAnalytics = Database['public']['Views']['session_analytics']['Row'];
+
+// Vector embeddings types
+export type DocumentEmbedding = Database['public']['Tables']['document_embeddings']['Row'];
+export type DocumentEmbeddingInsert = Database['public']['Tables']['document_embeddings']['Insert'];
+export type DocumentEmbeddingUpdate = Database['public']['Tables']['document_embeddings']['Update'];
