@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   messageBubble: {
-    backgroundColor: Colors.primary.light,
+    backgroundColor: Colors.primary[100],
     padding: Spacing.md,
     borderRadius: 16,
     marginBottom: Spacing.xs,
@@ -452,7 +452,7 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: '100%',
-    backgroundColor: Colors.primary.main,
+    backgroundColor: Colors.primary[500],
     borderRadius: 2,
   },
   samplesCard: {
@@ -524,7 +524,7 @@ const styles = StyleSheet.create({
   },
   eiScore: {
     ...Typography.styles.h3,
-    color: Colors.primary.main,
+    color: Colors.primary[500],
     fontWeight: '700',
   },
   eiBar: {
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
   },
   eiFill: {
     height: '100%',
-    backgroundColor: Colors.primary.main,
+    backgroundColor: Colors.primary[500],
     borderRadius: 4,
   },
   traitsContainer: {
@@ -545,14 +545,14 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   traitTag: {
-    backgroundColor: Colors.primary.light,
+    backgroundColor: Colors.primary[100],
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: 16,
   },
   traitText: {
     ...Typography.styles.bodySmall,
-    color: Colors.primary.main,
+    color: Colors.primary[500],
     fontWeight: '600',
   },
   recommendationsList: {
