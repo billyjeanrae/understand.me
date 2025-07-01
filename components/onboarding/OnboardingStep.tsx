@@ -1,11 +1,11 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Colors } from "../../constants/Colors";
-import { Typography } from "../../constants/Typography";
-import { Spacing } from "../../constants/Spacing";
-import { ResponsiveLayout } from "../layout/ResponsiveLayout";
-import { Button } from "../ui/Button";
-import { Card } from "../ui/Card";
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { ResponsiveLayout } from '../layout/ResponsiveLayout';
+import { Card } from '../ui/Card';
+import { Button } from '../ui/Button';
+import { Colors } from '../../constants/Colors';
+import { Typography } from '../../constants/Typography';
+import { Spacing } from '../../constants/Spacing';
 
 export interface OnboardingStepProps {
   title: string;
@@ -15,12 +15,10 @@ export interface OnboardingStepProps {
   totalSteps: number;
   onNext?: () => void;
   onBack?: () => void;
-  onSkip?: () => void;
   nextButtonText?: string;
   backButtonText?: string;
   nextDisabled?: boolean;
   loading?: boolean;
-  showNextButton?: boolean;
 }
 
 export const OnboardingStep: React.FC<OnboardingStepProps> = ({
@@ -31,12 +29,10 @@ export const OnboardingStep: React.FC<OnboardingStepProps> = ({
   totalSteps,
   onNext,
   onBack,
-  onSkip,
-  nextButtonText = "Continue",
-  backButtonText = "Back",
+  nextButtonText = 'Continue',
+  backButtonText = 'Back',
   nextDisabled = false,
   loading = false,
-  showNextButton = true,
 }) => {
   const progress = (currentStep / totalSteps) * 100;
 
@@ -60,7 +56,9 @@ export const OnboardingStep: React.FC<OnboardingStepProps> = ({
         </View>
 
         {/* Content */}
-        <Card style={styles.contentCard}>{children}</Card>
+        <Card style={styles.contentCard}>
+          {children}
+        </Card>
 
         {/* Navigation Buttons */}
         <View style={styles.navigation}>
@@ -72,24 +70,15 @@ export const OnboardingStep: React.FC<OnboardingStepProps> = ({
               style={styles.backButton}
             />
           )}
-
-          {onSkip && (
-            <Button
-              title="Skip"
-              onPress={onSkip}
-              variant="ghost"
-              style={styles.skipButton}
-            />
-          )}
-
-          {onNext && showNextButton && (
+          
+          {onNext && (
             <Button
               title={nextButtonText}
               onPress={onNext}
               disabled={nextDisabled}
               loading={loading}
               style={styles.nextButton}
-              fullWidth={!onBack && !onSkip}
+              fullWidth={!onBack}
             />
           )}
         </View>
@@ -103,67 +92,63 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: Spacing.xl,
   },
-
+  
   progressContainer: {
     marginBottom: Spacing.xl,
   },
-
+  
   progressBackground: {
     height: 4,
     backgroundColor: Colors.border.light,
     borderRadius: 2,
     marginBottom: Spacing.sm,
   },
-
+  
   progressFill: {
-    height: "100%",
+    height: '100%',
     backgroundColor: Colors.primary[500],
     borderRadius: 2,
   },
-
+  
   progressText: {
     ...Typography.styles.caption,
     color: Colors.text.tertiary,
-    textAlign: "center",
+    textAlign: 'center',
   },
-
+  
   header: {
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: Spacing.xl,
   },
-
+  
   title: {
-    ...Typography.styles.h1,
+    ...Typography.styles.h2,
     color: Colors.text.primary,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: Spacing.sm,
   },
-
+  
   subtitle: {
     ...Typography.styles.body,
     color: Colors.text.secondary,
-    textAlign: "center",
+    textAlign: 'center',
     maxWidth: 300,
   },
-
+  
   contentCard: {
     flex: 1,
     marginBottom: Spacing.xl,
   },
-
+  
   navigation: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: Spacing.md,
   },
-
+  
   backButton: {
     flex: 1,
   },
-
-  skipButton: {
-    flex: 1,
-  },
-
+  
   nextButton: {
     flex: 2,
   },

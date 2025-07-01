@@ -7,12 +7,11 @@ interface User {
   name: string;
   username?: string;
   bio?: string;
-  avatar?: string;
+  conflictStyle?: string;
+  goals?: string;
   location?: string;
-  createdAt?: string;
   personalityProfile?: Record<string, any>;
   onboardingComplete?: boolean;
-  profileSetupComplete?: boolean;
 }
 
 export interface OnboardingData {
@@ -21,12 +20,7 @@ export interface OnboardingData {
   confirmPassword?: string;
   location?: string;
   personalityAnswers?: Record<string, any>;
-  personalityProfile?: Record<string, any>;
   currentStep?: number;
-  voiceOnboardingSkipped?: boolean;
-  voiceOnboardingCompleted?: boolean;
-  personalityAssessmentSkipped?: boolean;
-  personalityAssessmentCompleted?: boolean;
 }
 
 interface AuthState {
@@ -34,7 +28,7 @@ interface AuthState {
   isLoading: boolean;
   isAuthenticated: boolean;
   onboardingData: OnboardingData;
-
+  
   // Actions
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, name: string) => Promise<void>;
@@ -44,7 +38,6 @@ interface AuthState {
   updateOnboardingData: (data: Partial<OnboardingData>) => void;
   completeOnboarding: () => Promise<void>;
   resetOnboarding: () => void;
-  completeProfileSetup: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -144,7 +137,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
   
   updateOnboardingData: (data) => set((state) => ({
-    onboardingData: { ...state.onboardingData, ...data },
+    onboardingData: { ...state.onboardingData, ...data }
   })),
   
   completeOnboarding: async () => {
@@ -166,17 +159,4 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   resetOnboarding: () => set({
     onboardingData: { currentStep: 0 },
   }),
-
-  completeProfileSetup: async () => {
-    const { user } = get();
-    if (!user) return;
-    
-    const updatedUser = {
-      ...user,
-      profileSetupComplete: true,
-    };
-    
-    await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
-    set({ user: updatedUser });
-  },
 }));

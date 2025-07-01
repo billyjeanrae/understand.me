@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   voiceTitle: {
-    ...Typography.heading.h2,
+    ...Typography.styles.h2,
     color: Colors.text.primary,
     marginBottom: Spacing.xs,
   },
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   benefitsTitle: {
-    ...Typography.heading.h3,
+    ...Typography.styles.h3,
     color: Colors.text.primary,
     marginBottom: Spacing.md,
   },

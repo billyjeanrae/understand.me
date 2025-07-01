@@ -14,15 +14,13 @@ import { Spacing } from '../../constants/Spacing';
 export interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'therapeutic' | 'supportive' | 'calming';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
   loading?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
   fullWidth?: boolean;
-  accessibilityLabel?: string;
-  accessibilityHint?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -35,8 +33,6 @@ export const Button: React.FC<ButtonProps> = ({
   style,
   textStyle,
   fullWidth = false,
-  accessibilityLabel,
-  accessibilityHint,
 }) => {
   const buttonStyle = [
     styles.base,
@@ -60,17 +56,12 @@ export const Button: React.FC<ButtonProps> = ({
       style={buttonStyle}
       onPress={onPress}
       disabled={disabled || loading}
-      activeOpacity={0.85} // Softer interaction for therapeutic feel
-      accessibilityRole="button"
-      accessibilityLabel={accessibilityLabel || title}
-      accessibilityHint={accessibilityHint}
-      accessibilityState={{ disabled: disabled || loading }}
+      activeOpacity={0.8}
     >
       {loading ? (
         <ActivityIndicator
-          color={variant === 'primary' || variant === 'therapeutic' ? Colors.text.inverse : Colors.primary[500]}
+          color={variant === 'primary' ? Colors.text.inverse : Colors.primary[500]}
           size="small"
-          accessibilityLabel="Loading"
         />
       ) : (
         <Text style={textStyleCombined}>{title}</Text>
@@ -81,52 +72,29 @@ export const Button: React.FC<ButtonProps> = ({
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: 16, // Softer, more therapeutic corners
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
     minHeight: Spacing.component.touchTarget,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
   },
-
-  // Therapeutic button variants
+  
+  // Variants
   primary: {
     backgroundColor: Colors.primary[500],
-    shadowColor: Colors.primary[300], // Softer shadow
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15, // Gentler shadow
-    shadowRadius: 6,
-    elevation: 3,
+    shadowColor: Colors.primary[500],
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   secondary: {
     backgroundColor: Colors.secondary[500],
-    shadowColor: Colors.secondary[300],
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  therapeutic: {
-    backgroundColor: Colors.emotion.calm,
-    shadowColor: Colors.emotion.calm,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  supportive: {
-    backgroundColor: Colors.emotion.growth,
-    shadowColor: Colors.emotion.growth,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  calming: {
-    backgroundColor: Colors.primary[100],
-    borderWidth: 1,
-    borderColor: Colors.primary[300],
+    shadowColor: Colors.secondary[500],
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   outline: {
     backgroundColor: 'transparent',
@@ -136,21 +104,29 @@ const styles = StyleSheet.create({
   ghost: {
     backgroundColor: 'transparent',
   },
+  danger: {
+    backgroundColor: Colors.error,
+    shadowColor: Colors.error,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+  },
 
   // Sizes
   small: {
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.component.buttonPaddingVerticalSmall,
+    paddingHorizontal: Spacing.component.buttonPaddingHorizontalSmall,
     minHeight: 36,
   },
   medium: {
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.component.buttonPaddingVertical,
+    paddingHorizontal: Spacing.component.buttonPaddingHorizontal,
   },
   large: {
-    paddingVertical: Spacing.lg,
-    paddingHorizontal: Spacing.xl,
-    minHeight: 56,
+    paddingVertical: Spacing.component.buttonPaddingVerticalLarge,
+    paddingHorizontal: Spacing.component.buttonPaddingHorizontalLarge,
+    minHeight: Spacing.component.touchTargetLarge,
   },
 
   // Text styles
@@ -160,42 +136,34 @@ const styles = StyleSheet.create({
   },
   primaryText: {
     color: Colors.text.inverse,
-    fontSize: Typography.sizes.base,
+    ...Typography.styles.button,
   },
   secondaryText: {
     color: Colors.text.inverse,
-    fontSize: Typography.sizes.base,
-  },
-  therapeuticText: {
-    color: Colors.text.inverse,
-    fontSize: Typography.sizes.base,
-  },
-  supportiveText: {
-    color: Colors.text.inverse,
-    fontSize: Typography.sizes.base,
-  },
-  calmingText: {
-    color: Colors.primary[700],
-    fontSize: Typography.sizes.base,
+    ...Typography.styles.button,
   },
   outlineText: {
     color: Colors.primary[500],
-    fontSize: Typography.sizes.base,
+    ...Typography.styles.button,
   },
   ghostText: {
     color: Colors.primary[500],
-    fontSize: Typography.sizes.base,
+    ...Typography.styles.button,
+  },
+  dangerText: {
+    color: Colors.text.inverse,
+    ...Typography.styles.button,
   },
 
   // Size-specific text
   smallText: {
-    fontSize: Typography.sizes.sm,
+    ...Typography.styles.buttonSmall,
   },
   mediumText: {
-    fontSize: Typography.sizes.base,
+    ...Typography.styles.button,
   },
   largeText: {
-    fontSize: Typography.sizes.lg,
+    ...Typography.styles.buttonLarge,
   },
 
   // States
@@ -211,5 +179,3 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
-
-export default Button;

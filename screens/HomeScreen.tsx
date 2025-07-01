@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Brain, Settings, Target, User } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import { RootStackParamList } from '../navigation/types';
 
 import { VoiceInteractionCore } from '../components/VoiceInteractionCore';
 import ChatUI from '../components/ChatUI';

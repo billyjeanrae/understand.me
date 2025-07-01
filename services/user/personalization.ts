@@ -196,9 +196,9 @@ class PersonalizationService {
 
     // Current emotional state
     if (emotionAnalysis) {
-      const primaryEmotion = emotionAnalysis.emotions[0];
+      const primaryEmotion = emotionAnalysis.primaryEmotion;
       if (primaryEmotion) {
-        personalizations.push(`The user is currently experiencing ${primaryEmotion.name} (${Math.round(primaryEmotion.score * 100)}% confidence). Respond appropriately to this emotional state.`);
+        personalizations.push(`The user is currently experiencing ${primaryEmotion.emotion} (${Math.round(primaryEmotion.confidence * 100)}% confidence). Respond appropriately to this emotional state.`);
       }
     }
 
@@ -231,7 +231,7 @@ class PersonalizationService {
         responses.push("How can we work together to solve this?");
         responses.push("What would a win-win solution look like?");
         break;
-      case 'direct':
+      case 'competitive':
         responses.push("I need to be clear about my concerns.");
         responses.push("Here's what I think we should do.");
         responses.push("Let me explain my position.");
@@ -255,9 +255,9 @@ class PersonalizationService {
 
     // Add emotion-specific responses
     if (emotionAnalysis) {
-      const primaryEmotion = emotionAnalysis.emotions[0];
+      const primaryEmotion = emotionAnalysis.primaryEmotion;
       if (primaryEmotion) {
-        switch (primaryEmotion.name.toLowerCase()) {
+        switch (primaryEmotion.emotion.toLowerCase()) {
           case 'anger':
           case 'frustration':
             responses.push("I'm feeling frustrated, and I need a moment.");
@@ -377,7 +377,8 @@ class PersonalizationService {
     
     let supportLevel: WorkflowAdaptation['supportLevel'] = 'enhanced';
     if (emotionAnalysis) {
-      const highIntensityEmotions = emotionAnalysis.emotions.filter(e => e.score > 0.7);
+      const allEmotions = [emotionAnalysis.primaryEmotion, ...emotionAnalysis.secondaryEmotions];
+      const highIntensityEmotions = allEmotions.filter(e => e.confidence > 0.7);
       if (highIntensityEmotions.length > 0) {
         supportLevel = 'intensive';
       }
@@ -412,9 +413,9 @@ class PersonalizationService {
 
     // Adjust based on current emotions
     if (emotionAnalysis) {
-      const primaryEmotion = emotionAnalysis.emotions[0];
+      const primaryEmotion = emotionAnalysis.primaryEmotion;
       if (primaryEmotion) {
-        switch (primaryEmotion.name.toLowerCase()) {
+        switch (primaryEmotion.emotion.toLowerCase()) {
           case 'anger':
           case 'frustration':
             primaryApproach = 'emotional_regulation';
@@ -434,7 +435,11 @@ class PersonalizationService {
     const cautionAreas = profile.conflictPreferences.triggerTopics;
     const encouragementStyle = profile.communicationStyle.aiInteractionStyle.feedbackStyle === 'gentle' 
       ? 'gentle' 
-      : profile.communicationStyle.aiInteractionStyle.personality;
+      : profile.communicationStyle.aiInteractionStyle.personality === 'direct' 
+        ? 'motivational'
+        : profile.communicationStyle.aiInteractionStyle.personality === 'supportive'
+          ? 'empathetic'
+          : profile.communicationStyle.aiInteractionStyle.personality;
 
     return {
       primaryApproach,
@@ -517,7 +522,8 @@ class PersonalizationService {
 
     // Add emotional state instructions
     if (emotionAnalysis) {
-      const highIntensityEmotions = emotionAnalysis.emotions.filter(e => e.score > 0.7);
+      const allEmotions = [emotionAnalysis.primaryEmotion, ...emotionAnalysis.secondaryEmotions];
+      const highIntensityEmotions = allEmotions.filter(e => e.confidence > 0.7);
       if (highIntensityEmotions.length > 0) {
         instructions.push('Take time to process your emotions before proceeding');
       }
@@ -552,4 +558,3 @@ class PersonalizationService {
 // Export singleton instance
 export const personalizationService = new PersonalizationService();
 export default personalizationService;
-

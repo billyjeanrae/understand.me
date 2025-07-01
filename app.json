@@ -31,10 +31,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "output": "server"
+      "output": "single"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-font"
     ],
     "scheme": "understand-me"
   }

@@ -247,7 +247,7 @@ class MultiPartyConflictService {
       plannedDuration: conflict.settings.maxSessionDuration,
       attendees: activeParticipants.map(p => p.id),
       absentees: [],
-      agenda: customAgenda || this.generateDefaultAgenda(conflict),
+      agenda: customAgenda ? { ...this.generateDefaultAgenda(conflict), ...customAgenda } : this.generateDefaultAgenda(conflict),
       currentPhase: this.generateDefaultAgenda(conflict).phases[0],
       phases: [],
       facilitationType: facilitatorId ? 'human_led' : 'ai_only',
@@ -370,7 +370,7 @@ class MultiPartyConflictService {
         timestamp: new Date(),
         participantEmotions: { [senderId]: emotionAnalysis },
         groupMood: this.calculateGroupMood(session),
-        intensity: emotionAnalysis.emotions[0]?.score || 0,
+        intensity: emotionAnalysis.primaryEmotion?.confidence || 0,
         triggers: [],
         interventions: [],
       };
@@ -773,11 +773,12 @@ class MultiPartyConflictService {
 
     recentEmotions.forEach(moment => {
       Object.values(moment.participantEmotions).forEach(analysis => {
-        analysis.emotions.forEach(emotion => {
-          if (positiveEmotions.includes(emotion.name.toLowerCase())) {
-            positiveCount += emotion.score;
-          } else if (negativeEmotions.includes(emotion.name.toLowerCase())) {
-            negativeCount += emotion.score;
+        const allEmotions = [analysis.primaryEmotion, ...analysis.secondaryEmotions];
+        allEmotions.forEach(emotion => {
+          if (positiveEmotions.includes(emotion.emotion.toLowerCase())) {
+            positiveCount += emotion.confidence;
+          } else if (negativeEmotions.includes(emotion.emotion.toLowerCase())) {
+            negativeCount += emotion.confidence;
           }
         });
       });
@@ -829,4 +830,3 @@ class MultiPartyConflictService {
 // Export singleton instance
 export const multiPartyConflictService = new MultiPartyConflictService();
 export default multiPartyConflictService;
-

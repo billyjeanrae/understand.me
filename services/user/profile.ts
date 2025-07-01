@@ -153,65 +153,79 @@ class UserProfileService {
       throw new Error('No profile found. Create profile first.');
     }
 
+    // Exclude nested objects from updates to handle them separately
+    const { personalInfo, conflictPreferences, communicationStyle, learningPatterns, personalizationSettings, ...otherUpdates } = updates;
+
     const updatedProfile: UserProfile = {
       ...this.profile,
-      ...updates,
+      ...otherUpdates,
       updatedAt: new Date(),
     };
 
     // Deep merge nested objects
-    if (updates.personalInfo) {
+    if (personalInfo) {
       updatedProfile.personalInfo = {
         ...this.profile.personalInfo,
-        ...updates.personalInfo,
+        ...personalInfo,
       };
     }
 
-    if (updates.conflictPreferences) {
+    if (conflictPreferences) {
       updatedProfile.conflictPreferences = {
         ...this.profile.conflictPreferences,
-        ...updates.conflictPreferences,
+        ...conflictPreferences,
       };
     }
 
-    if (updates.communicationStyle) {
+    if (communicationStyle) {
       updatedProfile.communicationStyle = {
         ...this.profile.communicationStyle,
-        ...updates.communicationStyle,
+        ...communicationStyle,
         voiceSettings: {
           ...this.profile.communicationStyle.voiceSettings,
-          ...updates.communicationStyle.voiceSettings,
+          ...communicationStyle.voiceSettings,
         },
         textPreferences: {
           ...this.profile.communicationStyle.textPreferences,
-          ...updates.communicationStyle.textPreferences,
+          ...communicationStyle.textPreferences,
         },
         aiInteractionStyle: {
           ...this.profile.communicationStyle.aiInteractionStyle,
-          ...updates.communicationStyle.aiInteractionStyle,
+          ...communicationStyle.aiInteractionStyle,
         },
       };
     }
 
-    if (updates.personalizationSettings) {
+    if (learningPatterns) {
+      updatedProfile.learningPatterns = {
+        ...this.profile.learningPatterns,
+        ...learningPatterns,
+      };
+    }
+
+    if (updates.conflictHistory) {
+      updatedProfile.conflictHistory = updates.conflictHistory;
+    }
+
+    if (personalizationSettings) {
       updatedProfile.personalizationSettings = {
         ...this.profile.personalizationSettings,
-        ...updates.personalizationSettings,
+        ...personalizationSettings,
         notifications: {
           ...this.profile.personalizationSettings.notifications,
-          ...updates.personalizationSettings.notifications,
+          ...personalizationSettings.notifications,
         },
         privacy: {
           ...this.profile.personalizationSettings.privacy,
-          ...updates.personalizationSettings.privacy,
+          ...personalizationSettings.privacy,
         },
         accessibility: {
           ...this.profile.personalizationSettings.accessibility,
-          ...updates.personalizationSettings.accessibility,
+          ...personalizationSettings.accessibility,
         },
         customization: {
           ...this.profile.personalizationSettings.customization,
-          ...updates.personalizationSettings.customization,
+          ...personalizationSettings.customization,
         },
       };
     }
@@ -667,4 +681,3 @@ class UserProfileService {
 // Export singleton instance
 export const userProfileService = new UserProfileService();
 export default userProfileService;
-

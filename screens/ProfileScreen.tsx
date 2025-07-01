@@ -42,7 +42,7 @@ import {
   useRecentConflicts,
   usePersonalizedInsights
 } from '../stores/userProfileStore';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import { RootStackParamList } from '../navigation/types';
 import ProfileManagement from '../components/ProfileManagement';
 
 type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Profile'>;
@@ -656,4 +656,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-

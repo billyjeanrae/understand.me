@@ -163,9 +163,9 @@ class GroupMediationWorkflowService {
         guidance.push(`Check in with ${participant.name} - low engagement detected`);
       }
       if (participant.currentEmotions) {
-        const primaryEmotion = participant.currentEmotions.emotions[0];
-        if (primaryEmotion && primaryEmotion.score > 0.7) {
-          guidance.push(`${participant.name} showing high ${primaryEmotion.name} - provide support`);
+        const primaryEmotion = participant.currentEmotions.primaryEmotion;
+        if (primaryEmotion && primaryEmotion.confidence > 0.7) {
+          guidance.push(`${participant.name} showing high ${primaryEmotion.emotion} - provide support`);
         }
       }
     });
@@ -663,4 +663,3 @@ class GroupMediationWorkflowService {
 // Export singleton instance
 export const groupMediationWorkflowService = new GroupMediationWorkflowService();
 export default groupMediationWorkflowService;
-

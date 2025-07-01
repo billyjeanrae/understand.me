@@ -87,7 +87,7 @@ async function analyzeEmotionFromAudio(
     await new Promise(resolve => setTimeout(resolve, 3000));
     
     // Get job results
-    const resultsResponse = await fetch(`https://api.hume.ai/v0/batch/jobs/${jobData.job_id}`, {
+    const resultsResponse = await fetch(`https://api.hume.ai/v0/batch/jobs/${jobData.jobId}`, {
       headers: {
         'X-Hume-Api-Key': apiKey,
       },
@@ -95,7 +95,7 @@ async function analyzeEmotionFromAudio(
 
     const results = await resultsResponse.json();
     
-    return processHumeResults(results, options);
+    return await processHumeResults(results, options);
   } catch (error) {
     console.error('Hume AI emotion analysis error:', error);
     throw error;
@@ -344,10 +344,10 @@ function generateRecommendations(
 /**
  * Process Hume AI results into our format
  */
-function processHumeResults(results: any, options: EmotionDetectionOptions): EmotionAnalysis {
+async function processHumeResults(results: any, options: EmotionDetectionOptions): Promise<EmotionAnalysis> {
   // This would process actual Hume AI results
   // For now, return mock data similar to our text analysis
-  return analyzeEmotionMock('', options);
+  return await analyzeEmotionMock('', options);
 }
 
 /**
@@ -452,4 +452,3 @@ export function getEmotionAwareResponseSuggestions(
 
   return suggestions.slice(0, 3); // Return top 3 suggestions
 }
-
