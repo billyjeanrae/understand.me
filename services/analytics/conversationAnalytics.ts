@@ -93,7 +93,7 @@ class ConversationAnalyticsService {
     const dataPoint: EmotionalDataPoint = {
       timestamp: new Date(),
       emotions,
-      intensity: emotions.emotions[0]?.score * 100 || 0,
+      intensity: emotions.primaryEmotion.confidence * 100 || 0,
       trigger,
       context,
       aiResponse
@@ -374,15 +374,16 @@ class ConversationAnalyticsService {
     const emotionCounts: Record<string, { count: number; totalIntensity: number; maxIntensity: number }> = {};
     
     journey.forEach(point => {
-      point.emotions.emotions.forEach(emotion => {
-        if (!emotionCounts[emotion.name]) {
-          emotionCounts[emotion.name] = { count: 0, totalIntensity: 0, maxIntensity: 0 };
+      const allEmotions = [point.emotions.primaryEmotion, ...point.emotions.secondaryEmotions];
+      allEmotions.forEach(emotion => {
+        if (!emotionCounts[emotion.emotion]) {
+          emotionCounts[emotion.emotion] = { count: 0, totalIntensity: 0, maxIntensity: 0 };
         }
-        emotionCounts[emotion.name].count++;
-        emotionCounts[emotion.name].totalIntensity += emotion.score * 100;
-        emotionCounts[emotion.name].maxIntensity = Math.max(
-          emotionCounts[emotion.name].maxIntensity,
-          emotion.score * 100
+        emotionCounts[emotion.emotion].count++;
+        emotionCounts[emotion.emotion].totalIntensity += emotion.confidence * 100;
+        emotionCounts[emotion.emotion].maxIntensity = Math.max(
+          emotionCounts[emotion.emotion].maxIntensity,
+          emotion.confidence * 100
         );
       });
     });
@@ -394,7 +395,10 @@ class ConversationAnalyticsService {
         averageIntensity: data.totalIntensity / data.count,
         peakIntensity: data.maxIntensity,
         contexts: journey
-          .filter(p => p.emotions.emotions.some(e => e.name === emotion))
+          .filter(p => {
+            const allEmotions = [p.emotions.primaryEmotion, ...p.emotions.secondaryEmotions];
+            return allEmotions.some(e => e.emotion === emotion);
+          })
           .map(p => p.context)
       }))
       .sort((a, b) => b.frequency - a.frequency);
@@ -406,8 +410,8 @@ class ConversationAnalyticsService {
 
     // Update emotional progress
     if (journey.length >= 2) {
-      const firstEmotion = journey[0].emotions.emotions[0]?.name || 'neutral';
-      const lastEmotion = journey[journey.length - 1].emotions.emotions[0]?.name || 'neutral';
+      const firstEmotion = journey[0].emotions.primaryEmotion.emotion || 'neutral';
+      const lastEmotion = journey[journey.length - 1].emotions.primaryEmotion.emotion || 'neutral';
       
       analytics.emotionalProgress.startingState = firstEmotion;
       analytics.emotionalProgress.endingState = lastEmotion;
@@ -514,13 +518,13 @@ class ConversationAnalyticsService {
 
       // Identify breakthroughs (positive emotional shifts)
       if (intensityChange > 20 || 
-          (positiveEmotions.includes(current.emotions.emotions[0]?.name.toLowerCase()) &&
-           negativeEmotions.includes(previous.emotions.emotions[0]?.name.toLowerCase()))) {
+          (positiveEmotions.includes(current.emotions.primaryEmotion.emotion.toLowerCase()) &&
+           negativeEmotions.includes(previous.emotions.primaryEmotion.emotion.toLowerCase()))) {
         
         breakthroughs.push({
           timestamp: current.timestamp,
-          description: `Positive emotional shift from ${previous.emotions.emotions[0]?.name} to ${current.emotions.emotions[0]?.name}`,
-          emotionalShift: `${previous.emotions.emotions[0]?.name} → ${current.emotions.emotions[0]?.name}`,
+          description: `Positive emotional shift from ${previous.emotions.primaryEmotion.emotion} to ${current.emotions.primaryEmotion.emotion}`,
+          emotionalShift: `${previous.emotions.primaryEmotion.emotion} → ${current.emotions.primaryEmotion.emotion}`,
           triggerEvent: current.trigger || current.context,
           impact: intensityChange > 40 ? 'major' : intensityChange > 25 ? 'moderate' : 'minor'
         });
@@ -528,13 +532,13 @@ class ConversationAnalyticsService {
 
       // Identify challenging moments (negative emotional shifts)
       if (intensityChange < -20 || 
-          (negativeEmotions.includes(current.emotions.emotions[0]?.name.toLowerCase()) &&
+          (negativeEmotions.includes(current.emotions.primaryEmotion.emotion.toLowerCase()) &&
            current.intensity > 70)) {
         
         challenges.push({
           timestamp: current.timestamp,
-          description: `Challenging emotional moment: ${current.emotions.emotions[0]?.name}`,
-          emotionalState: current.emotions.emotions[0]?.name,
+          description: `Challenging emotional moment: ${current.emotions.primaryEmotion.emotion}`,
+          emotionalState: current.emotions.primaryEmotion.emotion,
           triggerEvent: current.trigger || current.context,
           recoveryTime: this.calculateRecoveryTime(journey, i),
           interventionUsed: current.aiResponse ? 'AI intervention' : undefined
@@ -591,4 +595,3 @@ class ConversationAnalyticsService {
 // Export singleton instance
 export const conversationAnalyticsService = new ConversationAnalyticsService();
 export default conversationAnalyticsService;
-

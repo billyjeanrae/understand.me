@@ -3,7 +3,8 @@
  * Real-time chat interface for group conflict resolution sessions
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import * as React from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -121,13 +122,14 @@ export default function MultiPartyChat({
   const handleVoiceSend = (voiceData: any) => {
     const voiceMessage: MultiPartyMessage = {
       id: voiceData.id,
+      conflictId: conflict.id,
+      sessionId: session?.id || '',
       senderId: currentUserId,
-      senderName: currentParticipant?.name || 'Unknown',
       content: `Voice message (${Math.floor(voiceData.duration)}s)`,
       type: 'voice',
       timestamp: voiceData.timestamp,
-      isRead: false,
-      voiceData: voiceData
+      reactions: [],
+      mentions: []
     };
 
     setMessages(prev => [...prev, voiceMessage]);
@@ -242,10 +244,10 @@ export default function MultiPartyChat({
               </Text>
 
               {/* Emotion indicator */}
-              {message.emotionAnalysis && message.emotionAnalysis.emotions.length > 0 && (
+              {message.emotionAnalysis && message.emotionAnalysis.primaryEmotion && (
                 <View style={styles.emotionIndicator}>
                   <Text style={styles.emotionText}>
-                    {message.emotionAnalysis.emotions[0].name}
+                    {message.emotionAnalysis.primaryEmotion.emotion}
                   </Text>
                 </View>
               )}

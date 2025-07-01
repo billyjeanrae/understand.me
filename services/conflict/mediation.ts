@@ -831,7 +831,7 @@ export function generateSessionInsights(session: MediationSession): string[] {
     }
     
     const dominantEmotions = session.emotionalJourney.map(e => e.emotion);
-    const uniqueEmotions = [...new Set(dominantEmotions)];
+    const uniqueEmotions = Array.from(new Set(dominantEmotions));
     if (uniqueEmotions.length > 3) {
       insights.push('A wide range of emotions were expressed, showing emotional processing and exploration');
     }
@@ -886,4 +886,3 @@ export function createProgressNote(
     createdBy: 'ai'
   };
 }
-

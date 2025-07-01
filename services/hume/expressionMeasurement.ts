@@ -102,7 +102,7 @@ export class HumeExpressionMeasurementService {
       });
 
       // Get job details and wait for completion
-      const jobId = job.job_id;
+      const jobId = job.jobId;
       let jobDetails = await this.client.expressionMeasurement.batch.getJobDetails(jobId);
 
       // Poll for completion (with timeout)
@@ -161,16 +161,14 @@ export class HumeExpressionMeasurementService {
       }));
 
       // Start inference job for audio analysis
-      const job = await this.client.expressionMeasurement.batch.startInferenceJobFromLocalFile([audioBlob], {
-        models: {
-          speech: {
-            granularity: 'utterance'
-          }
+      const job = await this.client.expressionMeasurement.batch.startInferenceJobFromLocalFile([audioBlob as any], {
+        speech: {
+          granularity: 'utterance'
         }
-      });
+      } as any);
 
       // Get job details and wait for completion
-      const jobId = job.job_id;
+      const jobId = job.jobId;
       let jobDetails = await this.client.expressionMeasurement.batch.getJobDetails(jobId);
 
       // Poll for completion

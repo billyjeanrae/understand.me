@@ -269,6 +269,8 @@ export interface UserProfileUpdate {
   personalInfo?: Partial<PersonalInfo>;
   conflictPreferences?: Partial<ConflictPreferences>;
   communicationStyle?: Partial<CommunicationStyle>;
+  learningPatterns?: Partial<LearningPatterns>;
+  conflictHistory?: ConflictHistorySummary;
   personalizationSettings?: Partial<PersonalizationSettings>;
 }
 
@@ -303,4 +305,3 @@ export interface UserPreferences {
   sessionDuration: ConflictPreferences['sessionDuration'];
   notificationsEnabled: boolean;
 }
-
