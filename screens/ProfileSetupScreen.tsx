@@ -25,8 +25,8 @@ export default function ProfileSetupScreen({ navigation }: Props) {
   const [conflictStyle, setConflictStyle] = useState('');
   const [goals, setGoals] = useState('');
   const [loading, setLoading] = useState(false);
-  
-  const { updateProfile } = useAuthStore();
+
+  const { updateProfile, completeProfileSetup } = useAuthStore();
 
   const conflictStyles = [
     { id: 'collaborative', label: 'Collaborative', description: 'I prefer working together to find solutions' },
@@ -49,6 +49,7 @@ export default function ProfileSetupScreen({ navigation }: Props) {
         conflictStyle,
         goals: goals.trim(),
       });
+      await completeProfileSetup();
       // Navigation will be handled by AppNavigator
     } catch (error) {
       Alert.alert('Error', 'Failed to save profile. Please try again.');

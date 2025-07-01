@@ -242,10 +242,10 @@ export default function MultiPartyChat({
               </Text>
 
               {/* Emotion indicator */}
-              {message.emotionAnalysis && message.emotionAnalysis.emotions.length > 0 && (
+              {message.emotionAnalysis?.primaryEmotion && (
                 <View style={styles.emotionIndicator}>
                   <Text style={styles.emotionText}>
-                    {message.emotionAnalysis.emotions[0].name}
+                    {message.emotionAnalysis.primaryEmotion.emotion}
                   </Text>
                 </View>
               )}

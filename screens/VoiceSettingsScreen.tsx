@@ -94,6 +94,7 @@ export default function VoiceSettingsScreen() {
       
       <View style={styles.header}>
         <Pressable style={styles.backButton}>
+          {/* TODO: Add navigation.goBack() when navigation props are available */}
           <ArrowLeft size={24} color="#F1F5F9" strokeWidth={2} />
         </Pressable>
         <Text style={styles.title}>Voice Settings</Text>

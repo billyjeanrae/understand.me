@@ -163,9 +163,9 @@ class GroupMediationWorkflowService {
         guidance.push(`Check in with ${participant.name} - low engagement detected`);
       }
       if (participant.currentEmotions) {
-        const primaryEmotion = participant.currentEmotions.emotions[0];
-        if (primaryEmotion && primaryEmotion.score > 0.7) {
-          guidance.push(`${participant.name} showing high ${primaryEmotion.name} - provide support`);
+        const primaryEmotion = participant.currentEmotions.primaryEmotion;
+        if (primaryEmotion && primaryEmotion.confidence > 0.7) {
+          guidance.push(`${participant.name} showing high ${primaryEmotion.emotion} - provide support`);
         }
       }
     });
@@ -273,18 +273,19 @@ class GroupMediationWorkflowService {
         }
         break;
 
-      case 'perspective_sharing':
+      case 'perspective_sharing': {
         // Check if all participants have shared their perspective
-        const sharedPerspectives = conflict.participants.filter(p => 
+        const sharedPerspectives = conflict.participants.filter(p =>
           p.perspective.summary && p.perspective.summary.length > 0
         ).length;
         const totalParticipants = conflict.participants.filter(p => p.status === 'joined').length;
         completionScore = (sharedPerspectives / totalParticipants) * 100;
-        
+
         if (completionScore < 100) {
           recommendations.push('Ensure all participants have shared their perspective');
         }
         break;
+      }
 
       case 'issue_identification':
         // Check if core issues have been identified
@@ -297,20 +298,21 @@ class GroupMediationWorkflowService {
         }
         break;
 
-      case 'solution_generation':
+      case 'solution_generation': {
         // Check if solutions have been generated
         const solutionCount = session.phases
           .filter(p => p.phaseId === phase.id)
           .reduce((count, result) => count + result.outcomes.length, 0);
         completionScore = Math.min(100, solutionCount * 10);
-        
+
         if (completionScore < 60) {
           recommendations.push('Generate more solution options');
           recommendations.push('Encourage creative thinking');
         }
         break;
+      }
 
-      case 'agreement':
+      case 'agreement': {
         // Check if agreements have been reached
         const agreedAgreements = conflict.agreements.filter(a => a.status === 'agreed').length;
         const totalAgreements = conflict.agreements.length;
@@ -322,6 +324,7 @@ class GroupMediationWorkflowService {
           recommendations.push('Focus on smaller, achievable agreements first');
         }
         break;
+      }
 
       default:
         completionScore = 75; // Default completion for other phases
