@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import humeService, { HumeAnalysisResult } from '../hume';
 
 /**
  * Emotion Detection Service for understanding emotional context in conflict resolution
@@ -40,62 +41,20 @@ async function analyzeEmotionFromAudio(
   options: EmotionDetectionOptions = {}
 ): Promise<EmotionAnalysis> {
   try {
-    const apiKey = process.env.EXPO_PUBLIC_HUME_API_KEY;
-    if (!apiKey) {
-      throw new Error('Hume AI API key not configured');
-    }
-
-    // Convert audio to base64 for Hume AI
-    const response = await fetch(audioUri);
-    const audioBlob = await response.blob();
-    const base64Audio = await blobToBase64(audioBlob);
-
-    // Call Hume AI Emotion API
-    const humeResponse = await fetch('https://api.hume.ai/v0/batch/jobs', {
-      method: 'POST',
-      headers: {
-        'X-Hume-Api-Key': apiKey,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        models: {
-          prosody: {
-            granularity: 'utterance',
-            identify_speakers: false,
-          },
-        },
-        transcription: {
-          language: 'en',
-        },
-        files: [
-          {
-            data: base64Audio.split(',')[1], // Remove data:audio/... prefix
-            content_type: 'audio/wav',
-          },
-        ],
-      }),
+    // Use the new Hume service for audio analysis
+    const analysisResult = await humeService.analyzeAudio(audioUri, {
+      includeProsody: true,
+      includeVocalBurst: true,
     });
 
-    if (!humeResponse.ok) {
-      throw new Error(`Hume AI API error: ${humeResponse.statusText}`);
+    if (analysisResult.status === 'failed') {
+      throw new Error(analysisResult.error || 'Hume AI analysis failed');
     }
 
-    const jobData = await humeResponse.json();
+    // Wait for job completion
+    const completedResult = await humeService.waitForJobCompletion(analysisResult.jobId);
     
-    // Poll for job completion (simplified for demo)
-    // In production, you'd implement proper polling or webhooks
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    // Get job results
-    const resultsResponse = await fetch(`https://api.hume.ai/v0/batch/jobs/${jobData.jobId}`, {
-      headers: {
-        'X-Hume-Api-Key': apiKey,
-      },
-    });
-
-    const results = await resultsResponse.json();
-    
-    return await processHumeResults(results, options);
+    return await processHumeResults(completedResult, options);
   } catch (error) {
     console.error('Hume AI emotion analysis error:', error);
     throw error;
@@ -103,14 +62,28 @@ async function analyzeEmotionFromAudio(
 }
 
 /**
- * Analyze emotions from text using sentiment analysis
+ * Analyze emotions from text using sentiment analysis or Hume AI
  */
 async function analyzeEmotionFromText(
   text: string, 
   options: EmotionDetectionOptions = {}
 ): Promise<EmotionAnalysis> {
   try {
-    // Simple text-based emotion analysis
+    // Try Hume AI for text analysis if available
+    if (process.env.EXPO_PUBLIC_HUME_API_KEY && options.provider === 'hume') {
+      try {
+        const analysisResult = await humeService.analyzeText(text);
+        
+        if (analysisResult.status !== 'failed') {
+          const completedResult = await humeService.waitForJobCompletion(analysisResult.jobId);
+          return await processHumeResults(completedResult, options);
+        }
+      } catch (humeError) {
+        console.warn('Hume text analysis failed, falling back to local analysis:', humeError);
+      }
+    }
+
+    // Fallback to simple text-based emotion analysis
     const emotions = detectEmotionsFromText(text);
     const conflictIndicators = analyzeConflictIndicators(text);
     
@@ -345,9 +318,57 @@ function generateRecommendations(
  * Process Hume AI results into our format
  */
 async function processHumeResults(results: any, options: EmotionDetectionOptions): Promise<EmotionAnalysis> {
-  // This would process actual Hume AI results
-  // For now, return mock data similar to our text analysis
-  return await analyzeEmotionMock('', options);
+  try {
+    if (!results || !results.predictions) {
+      return await analyzeEmotionMock('', options);
+    }
+
+    const emotions: EmotionScore[] = results.predictions.map((pred: any) => ({
+      emotion: pred.name,
+      confidence: pred.score,
+      intensity: pred.score,
+    }));
+
+    // Get top emotion
+    const topEmotion = emotions.reduce((prev, current) => 
+      (prev.confidence > current.confidence) ? prev : current
+    );
+
+    // Calculate overall sentiment
+    const positiveEmotions = ['joy', 'love', 'admiration', 'amusement', 'excitement'];
+    const negativeEmotions = ['anger', 'sadness', 'fear', 'disgust', 'disappointment'];
+    
+    const positiveScore = emotions
+      .filter(e => positiveEmotions.some(pos => e.emotion.toLowerCase().includes(pos)))
+      .reduce((sum, e) => sum + e.confidence, 0);
+    
+    const negativeScore = emotions
+      .filter(e => negativeEmotions.some(neg => e.emotion.toLowerCase().includes(neg)))
+      .reduce((sum, e) => sum + e.confidence, 0);
+
+    let sentiment: 'positive' | 'negative' | 'neutral';
+    if (positiveScore > negativeScore + 0.1) {
+      sentiment = 'positive';
+    } else if (negativeScore > positiveScore + 0.1) {
+      sentiment = 'negative';
+    } else {
+      sentiment = 'neutral';
+    }
+
+    return {
+      emotions: emotions.slice(0, 10), // Top 10 emotions
+      topEmotion: topEmotion.emotion,
+      confidence: topEmotion.confidence,
+      sentiment,
+      arousal: calculateArousal(emotions),
+      valence: calculateValence(emotions),
+      recommendations: generateRecommendations(emotions, sentiment),
+      timestamp: new Date().toISOString(),
+    };
+  } catch (error) {
+    console.error('Error processing Hume results:', error);
+    return await analyzeEmotionMock('', options);
+  }
 }
 
 /**

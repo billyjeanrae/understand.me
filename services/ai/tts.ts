@@ -1,5 +1,6 @@
 import { Platform } from 'react-native';
 import { Audio } from 'expo-av';
+import * as Speech from 'expo-speech';
 
 /**
  * Text-to-Speech service for converting AI responses to speech
@@ -109,8 +110,38 @@ async function textToSpeechWeb(text: string, options: TTSOptions = {}): Promise<
 }
 
 /**
- * Fallback TTS implementation using Expo's Audio
- * This is a mock implementation for development
+ * Convert text to speech using Expo Speech API
+ */
+async function textToSpeechExpo(text: string, options: TTSOptions = {}): Promise<TTSResult> {
+  try {
+    const voices = await Speech.getAvailableVoicesAsync();
+    
+    // Find a suitable voice
+    const preferredVoice = voices.find(voice => 
+      voice.language.startsWith('en') && voice.quality === 'Enhanced'
+    ) || voices.find(voice => voice.language.startsWith('en'));
+
+    const speechOptions: Speech.SpeechOptions = {
+      voice: preferredVoice?.identifier,
+      rate: options.speed || 1.0,
+      pitch: options.pitch || 1.0,
+      language: 'en-US',
+    };
+
+    // Speak the text
+    Speech.speak(text, speechOptions);
+    
+    return {
+      duration: estimateSpeechDuration(text),
+    };
+  } catch (error) {
+    console.error('Expo Speech error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Fallback TTS implementation for development
  */
 async function textToSpeechMock(text: string, options: TTSOptions = {}): Promise<TTSResult> {
   // Simulate TTS processing time
@@ -145,7 +176,7 @@ export async function textToSpeech(
     return { duration: 0 };
   }
 
-  const provider = options.provider || (Platform.OS === 'web' ? 'web' : 'elevenlabs');
+  const provider = options.provider || (Platform.OS === 'web' ? 'web' : 'expo');
 
   try {
     switch (provider) {
@@ -159,8 +190,7 @@ export async function textToSpeech(
         return await textToSpeechElevenLabs(text, options);
 
       case 'expo':
-        // TODO: Implement Expo's built-in TTS when available
-        throw new Error('Expo TTS not yet implemented');
+        return await textToSpeechExpo(text, options);
 
       default:
         throw new Error(`Unknown TTS provider: ${provider}`);

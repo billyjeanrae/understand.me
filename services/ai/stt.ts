@@ -13,7 +13,9 @@ interface STTResult {
 
 interface STTOptions {
   language?: string;
-  provider?: 'google' | 'whisper' | 'web';
+  provider?: 'google' | 'whisper' | 'elevenlabs' | 'web';
+  diarize?: boolean;
+  tagAudioEvents?: boolean;
 }
 
 /**
@@ -58,6 +60,63 @@ async function speechToTextWeb(audioBlob: Blob, options: STTOptions = {}): Promi
     // feed audio blob to recognition. This is a simplified implementation.
     recognition.start();
   });
+}
+
+/**
+ * Convert audio file to text using ElevenLabs Speech-to-Text API
+ */
+async function speechToTextElevenLabs(audioUri: string, options: STTOptions = {}): Promise<STTResult> {
+  try {
+    const apiKey = process.env.ELEVENLABS_API_KEY;
+    if (!apiKey) {
+      throw new Error('ElevenLabs API key not configured');
+    }
+
+    // Read audio file
+    const response = await fetch(audioUri);
+    const audioBlob = await response.blob();
+
+    // Create form data
+    const formData = new FormData();
+    formData.append('file', audioBlob, 'audio.webm');
+    formData.append('model_id', 'scribe_v1');
+    
+    if (options.language) {
+      formData.append('language_code', options.language);
+    }
+    
+    if (options.diarize !== undefined) {
+      formData.append('diarize', options.diarize.toString());
+    }
+    
+    if (options.tagAudioEvents !== undefined) {
+      formData.append('tag_audio_events', options.tagAudioEvents.toString());
+    }
+
+    // Call ElevenLabs STT API
+    const sttResponse = await fetch('https://api.elevenlabs.io/v1/speech-to-text', {
+      method: 'POST',
+      headers: {
+        'xi-api-key': apiKey,
+      },
+      body: formData,
+    });
+
+    if (!sttResponse.ok) {
+      throw new Error(`ElevenLabs STT API error: ${sttResponse.statusText}`);
+    }
+
+    const data = await sttResponse.json();
+    
+    return {
+      text: data.text,
+      confidence: data.language_probability,
+      language: data.language_code,
+    };
+  } catch (error) {
+    console.error('ElevenLabs STT error:', error);
+    throw error;
+  }
 }
 
 /**
@@ -157,7 +216,7 @@ export async function speechToText(
   audioUri: string, 
   options: STTOptions = {}
 ): Promise<STTResult> {
-  const provider = options.provider || (Platform.OS === 'web' ? 'web' : 'google');
+  const provider = options.provider || (Platform.OS === 'web' ? 'web' : 'elevenlabs');
 
   try {
     switch (provider) {
@@ -168,6 +227,9 @@ export async function speechToText(
           return await speechToTextMock(audioUri, options);
         }
         throw new Error('Web Speech API only available in browser');
+
+      case 'elevenlabs':
+        return await speechToTextElevenLabs(audioUri, options);
 
       case 'google':
         return await speechToTextGoogle(audioUri, options);
@@ -220,5 +282,3 @@ export function getSupportedLanguages(): string[] {
     'fi-FI',
   ];
 }
-
-

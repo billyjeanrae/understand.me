@@ -9,6 +9,7 @@ import {
   Vibration,
   Platform,
 } from 'react-native';
+import { Audio } from 'expo-av';
 import { useResponsive } from '../utils/platform';
 import { PlatformUtils } from '../utils/platform';
 import {
@@ -55,6 +56,9 @@ export default function VoiceMessageRecorder({
   const waveformAnim = useRef(new Animated.Value(0)).current;
   const recordingTimer = useRef<NodeJS.Timeout | null>(null);
   const playbackTimer = useRef<NodeJS.Timeout | null>(null);
+  const recording = useRef<Audio.Recording | null>(null);
+  const sound = useRef<Audio.Sound | null>(null);
+  const mediaRecorder = useRef<MediaRecorder | null>(null);
 
   useEffect(() => {
     return () => {
@@ -142,11 +146,37 @@ export default function VoiceMessageRecorder({
         }
         
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        // TODO: Implement MediaRecorder setup
+        const recorder = new MediaRecorder(stream);
+        const chunks: BlobPart[] = [];
+        
+        recorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            chunks.push(event.data);
+          }
+        };
+        
+        recorder.onstop = () => {
+          const blob = new Blob(chunks, { type: 'audio/webm' });
+          const url = URL.createObjectURL(blob);
+          setAudioUri(url);
+        };
+        
+        recorder.start();
+        mediaRecorder.current = recorder;
         console.log('Web recording started');
       } else {
-        // Mobile implementation
-        // TODO: Use expo-av or react-native-audio-recorder-player
+        // Mobile implementation using Expo AV
+        await Audio.requestPermissionsAsync();
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: true,
+          playsInSilentModeIOS: true,
+        });
+
+        const { recording: newRecording } = await Audio.Recording.createAsync(
+          Audio.RecordingOptionsPresets.HIGH_QUALITY
+        );
+        
+        recording.current = newRecording;
         console.log('Mobile recording started');
         if (Platform.OS !== 'web') {
           Vibration.vibrate(50);
@@ -157,9 +187,9 @@ export default function VoiceMessageRecorder({
       setIsPaused(false);
       setDuration(0);
       setWaveform([]);
-      setAudioUri(`recording_${Date.now()}.${PlatformUtils.isWeb ? 'webm' : 'm4a'}`);
       
     } catch (error) {
+      console.error('Recording error:', error);
       Alert.alert('Error', 'Failed to start recording. Please check microphone permissions.');
     }
   };
@@ -174,21 +204,34 @@ export default function VoiceMessageRecorder({
     // TODO: Resume actual recording
   };
 
-  const stopRecording = () => {
+  const stopRecording = async () => {
     setIsRecording(false);
     setIsPaused(false);
     stopRecordingTimer();
     
-    // Platform-specific stop recording
-    if (PlatformUtils.isWeb) {
-      // TODO: Stop MediaRecorder and get blob
-      console.log('Web recording stopped');
-    } else {
-      // TODO: Stop mobile recording
-      console.log('Mobile recording stopped');
-      if (Platform.OS !== 'web') {
-        Vibration.vibrate(50);
+    try {
+      // Platform-specific stop recording
+      if (PlatformUtils.isWeb) {
+        if (mediaRecorder.current) {
+          mediaRecorder.current.stop();
+          mediaRecorder.current.stream.getTracks().forEach(track => track.stop());
+          mediaRecorder.current = null;
+        }
+        console.log('Web recording stopped');
+      } else {
+        if (recording.current) {
+          await recording.current.stopAndUnloadAsync();
+          const uri = recording.current.getURI();
+          setAudioUri(uri);
+          recording.current = null;
+        }
+        console.log('Mobile recording stopped');
+        if (Platform.OS !== 'web') {
+          Vibration.vibrate(50);
+        }
       }
+    } catch (error) {
+      console.error('Error stopping recording:', error);
     }
   };
 
@@ -199,33 +242,59 @@ export default function VoiceMessageRecorder({
       setIsPlaying(true);
       setPlaybackPosition(0);
       
-      // TODO: Play actual audio file
-      // Simulate playback
-      playbackTimer.current = setInterval(() => {
-        setPlaybackPosition(prev => {
-          const newPosition = prev + 0.1;
-          if (newPosition >= duration) {
-            stopPlayback();
-            return duration;
+      if (PlatformUtils.isWeb) {
+        // Web audio playback
+        const audio = new Audio(audioUri);
+        audio.play();
+        
+        audio.onended = () => {
+          stopPlayback();
+        };
+        
+        audio.ontimeupdate = () => {
+          setPlaybackPosition(audio.currentTime);
+        };
+      } else {
+        // Mobile audio playback using Expo AV
+        const { sound: newSound } = await Audio.Sound.createAsync({ uri: audioUri });
+        sound.current = newSound;
+        
+        await newSound.playAsync();
+        
+        newSound.setOnPlaybackStatusUpdate((status) => {
+          if (status.isLoaded) {
+            if (status.didJustFinish) {
+              stopPlayback();
+            } else if (status.positionMillis !== undefined) {
+              setPlaybackPosition(status.positionMillis / 1000);
+            }
           }
-          return newPosition;
         });
-      }, 100);
+      }
       
     } catch (error) {
-      Alert.alert('Error', 'Failed to play recording.');
+      console.error('Playback error:', error);
       setIsPlaying(false);
     }
   };
 
-  const stopPlayback = () => {
+  const stopPlayback = async () => {
     setIsPlaying(false);
     setPlaybackPosition(0);
     if (playbackTimer.current) {
       clearInterval(playbackTimer.current);
       playbackTimer.current = null;
     }
-    // TODO: Stop actual audio playback
+    
+    try {
+      if (sound.current) {
+        await sound.current.stopAsync();
+        await sound.current.unloadAsync();
+        sound.current = null;
+      }
+    } catch (error) {
+      console.error('Error stopping playback:', error);
+    }
   };
 
   const deleteRecording = () => {
