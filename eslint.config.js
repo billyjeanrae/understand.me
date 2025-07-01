@@ -8,10 +8,11 @@ import reactNative from 'eslint-plugin-react-native';
 export default [
   // Base JavaScript configuration
   js.configs.recommended,
-  
-  // TypeScript and React files
+
+  // TypeScript and React files in project
   {
     files: ['**/*.{ts,tsx,js,jsx}'],
+    ignores: ['*.tsx', '*.ts'], // Ignore standalone files
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
@@ -102,7 +103,73 @@ export default [
       },
     },
   },
-  
+
+  // Standalone files (like Untitled-1)
+  {
+    files: ['*.tsx', '*.ts'],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+        // No project reference for standalone files
+      },
+      globals: {
+        __DEV__: 'readonly',
+        console: 'readonly',
+        process: 'readonly',
+        global: 'readonly',
+        Buffer: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        fetch: 'readonly',
+        FormData: 'readonly',
+        Headers: 'readonly',
+        Request: 'readonly',
+        Response: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
+        WebSocket: 'readonly',
+        navigator: 'readonly',
+        window: 'readonly',
+        document: 'readonly',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': typescript,
+      'react': react,
+      'react-hooks': reactHooks,
+      'react-native': reactNative,
+    },
+    rules: {
+      // Relaxed rules for standalone files
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      'react/prop-types': 'off',
+      'react/display-name': 'off',
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+      'react-native/no-unused-styles': 'off',
+      'react-native/no-inline-styles': 'off',
+      'react-native/no-color-literals': 'off',
+      'react-native/no-raw-text': 'off',
+      'no-console': 'off',
+      'no-undef': 'off', // TypeScript handles this
+      'import/no-unresolved': 'off', // Can't resolve modules outside project
+    },
+    settings: {
+      react: {
+        version: 'detect',
+      },
+    },
+  },
+
   // Ignore patterns
   {
     ignores: [
