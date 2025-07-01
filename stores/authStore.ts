@@ -51,48 +51,66 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   login: async (email: string, password: string) => {
     set({ isLoading: true });
     try {
-      // Simulate API call - replace with actual authentication
+      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       const user: User = {
         id: '1',
         email,
-        name: email.split('@')[0], // Simple name extraction
+        name: email.split('@')[0],
+        createdAt: new Date().toISOString(),
       };
       
       await AsyncStorage.setItem('user', JSON.stringify(user));
-      set({ user, isAuthenticated: true, isLoading: false });
+      await AsyncStorage.setItem('isAuthenticated', 'true');
+      
+      set({ 
+        user, 
+        isAuthenticated: true, 
+        isLoading: false 
+      });
     } catch (error) {
       set({ isLoading: false });
-      throw new Error('Login failed');
+      throw error;
     }
   },
-  
+
   signup: async (email: string, password: string, name: string) => {
     set({ isLoading: true });
     try {
-      // Simulate API call - replace with actual authentication
+      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       const user: User = {
         id: Date.now().toString(),
         email,
         name,
+        createdAt: new Date().toISOString(),
       };
       
       await AsyncStorage.setItem('user', JSON.stringify(user));
-      set({ user, isAuthenticated: true, isLoading: false });
+      await AsyncStorage.setItem('isAuthenticated', 'true');
+      
+      set({ 
+        user, 
+        isAuthenticated: true, 
+        isLoading: false 
+      });
     } catch (error) {
       set({ isLoading: false });
-      throw new Error('Signup failed');
+      throw error;
     }
   },
-  
+
   logout: () => {
-    AsyncStorage.removeItem('user');
-    set({ user: null, isAuthenticated: false });
+    AsyncStorage.multiRemove(['user', 'isAuthenticated']);
+    set({ 
+      user: null, 
+      isAuthenticated: false,
+      onboardingData: { currentStep: 0 }
+    });
   },
-  
+
   updateProfile: async (profile: Partial<User>) => {
     const { user } = get();
     if (!user) return;
@@ -101,12 +119,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
     set({ user: updatedUser });
   },
-  
+
   loadStoredAuth: async () => {
     try {
-      const storedUser = await AsyncStorage.getItem('user');
-      if (storedUser) {
-        const user = JSON.parse(storedUser);
+      const [storedUser, isAuthenticated] = await AsyncStorage.multiGet([
+        'user',
+        'isAuthenticated'
+      ]);
+      
+      if (storedUser[1] && isAuthenticated[1] === 'true') {
+        const user = JSON.parse(storedUser[1]);
         set({ user, isAuthenticated: true });
       }
     } catch (error) {
