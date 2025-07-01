@@ -12,8 +12,8 @@
     "build": "expo export --platform web",
     "build:web": "expo export --platform web",
     "preview": "npx serve dist",
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
-    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
