@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   assessmentTitle: {
-    ...Typography.heading.h2,
+    ...Typography.styles.h2,
     color: Colors.text.primary,
     marginBottom: Spacing.xs,
   },
@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   samplesTitle: {
-    ...Typography.heading.h3,
+    ...Typography.styles.h3,
     color: Colors.text.primary,
     marginBottom: Spacing.md,
   },
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   resultsTitle: {
-    ...Typography.heading.h2,
+    ...Typography.styles.h2,
     color: Colors.text.primary,
     marginBottom: Spacing.xs,
   },
@@ -508,7 +508,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   resultValue: {
-    ...Typography.heading.h3,
+    ...Typography.styles.h3,
     color: Colors.text.primary,
     marginBottom: Spacing.xs,
   },
@@ -523,7 +523,7 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   eiScore: {
-    ...Typography.heading.h3,
+    ...Typography.styles.h3,
     color: Colors.primary.main,
     fontWeight: '700',
   },
