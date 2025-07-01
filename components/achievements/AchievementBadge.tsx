@@ -58,7 +58,7 @@ export default function AchievementBadge({
 
   return (
     <ResponsiveCard
-      style={[
+      style={StyleSheet.flatten([
         styles.container,
         sizeStyles.container,
         {
@@ -68,8 +68,8 @@ export default function AchievementBadge({
             : 'rgba(55, 65, 81, 0.5)',
           opacity: achievement.isUnlocked ? 1 : 0.6,
         },
-        achievement.isNew && styles.newBadge,
-      ]}
+        ...(achievement.isNew ? [styles.newBadge] : []),
+      ])}
     >
       <View style={styles.content}>
         <Text style={[styles.icon, sizeStyles.icon]}>

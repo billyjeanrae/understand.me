@@ -23,7 +23,7 @@ export async function loadCorpus(texts: string[]): Promise<void> {
 			input: chunks,
 			model: 'voyage-2'
 		});
-		embeddings = response.data.map(item => item.embedding);
+		embeddings = response.data?.map(item => item.embedding).filter((emb): emb is number[] => emb !== undefined) || [];
 	} catch (error) {
 		console.error('Error generating embeddings:', error);
 		embeddings = [];
@@ -53,12 +53,22 @@ export async function findSimilar(query: string, topK = 3): Promise<{ chunk: str
 			input: [query],
 			model: 'voyage-2'
 		});
-		const qEmb = response.data[0].embedding;
+		const qEmb = response.data?.[0]?.embedding;
+		
+		if (!qEmb) {
+			console.error('No embedding returned for query');
+			return [];
+		}
 		
 		return chunks
-			.map((c, i) => ({ chunk: c, score: cosineSimilarity(qEmb, embeddings[i]) }))
-			.sort((a, b) => b.score - a.score)
-			.slice(0, topK);
+			.map((c, i) => {
+				const embedding = embeddings[i];
+				if (!embedding) return null;
+				return { chunk: c, score: cosineSimilarity(qEmb, embedding) };
+			})
+			.filter(Boolean)
+			.sort((a, b) => b!.score - a!.score)
+			.slice(0, topK) as { chunk: string; score: number }[];
 	} catch (error) {
 		console.error('Error finding similar chunks:', error);
 		return [];

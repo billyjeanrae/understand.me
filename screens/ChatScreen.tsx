@@ -35,7 +35,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 
 import { RootStackParamList } from '../navigation/types';
 import { chatWithUdine } from '../services/ai/chat';
-import { analyzeEmotion } from '../services/hume';
+import { analyzeEmotion } from '../services/ai/emotion';
 import VoiceMessageRecorder from '../components/VoiceMessageRecorder';
 import EmotionInsights from '../components/EmotionInsights';
 
@@ -171,7 +171,7 @@ export default function ChatScreen() {
       `;
 
       const response = await chatWithUdine(history, content, {
-        conflictType: 'individual',
+        conflictType: 'interpersonal',
         usePersonalization: true,
         emotionContext: messageEmotions,
         additionalContext: contextualPrompt
@@ -209,8 +209,16 @@ export default function ChatScreen() {
     return 'agreement';
   };
 
-  const handleVoiceMessage = async (audioData: any, transcript: string, emotions: any) => {
-    await sendMessage(transcript, emotions);
+  const handleVoiceMessage = async (voiceData: any) => {
+    // For now, we'll use a placeholder transcript
+    // In a real implementation, you'd transcribe the audio
+    const transcript = "Voice message received";
+    await sendMessage(transcript);
+  };
+
+  const handleVoiceCancel = () => {
+    // Handle voice recording cancellation
+    console.log('Voice recording cancelled');
   };
 
   const handleTextSubmit = async () => {
@@ -308,7 +316,7 @@ export default function ChatScreen() {
         {/* Emotion Insights */}
         {emotionInsights && (
           <View style={styles.emotionInsightsContainer}>
-            <EmotionInsights emotions={emotionInsights} compact />
+            <EmotionInsights emotionAnalysis={emotionInsights} compact />
           </View>
         )}
 
@@ -319,8 +327,8 @@ export default function ChatScreen() {
         >
           {isVoiceMode ? (
             <VoiceMessageRecorder
-              onVoiceMessage={handleVoiceMessage}
-              style={styles.voiceRecorder}
+              onSend={handleVoiceMessage}
+              onCancel={handleVoiceCancel}
             />
           ) : (
             <View style={styles.textInputContainer}>
@@ -486,4 +494,3 @@ const styles = StyleSheet.create({
     backgroundColor: '#334155',
   },
 });
-

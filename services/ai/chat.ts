@@ -67,9 +67,7 @@ export async function chatWithUdine(
 
 		// Generate AI response
 		const { text } = await generateText({
-			model: google('gemini-2.0-flash-exp', {
-				apiKey: process.env.GOOGLE_GENAI_API_KEY,
-			}),
+			model: google('gemini-2.0-flash-exp'),
 			system: systemPrompt,
 			messages: [...history, { role: 'user', content: message }]
 		});
@@ -105,9 +103,7 @@ export async function chatWithUdineEnhanced(
 
 		// Generate AI response
 		const { text } = await generateText({
-			model: google('gemini-2.0-flash-exp', {
-				apiKey: process.env.GOOGLE_GENAI_API_KEY,
-			}),
+			model: google('gemini-2.0-flash-exp'),
 			system: systemPrompt,
 			messages: [...history, { role: 'user', content: message }]
 		});

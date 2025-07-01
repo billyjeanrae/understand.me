@@ -381,7 +381,7 @@ export default function DigitalSignoff({
                 <Text style={styles.metadataLabel}>Status:</Text>
                 <Text style={[
                   styles.metadataValue,
-                  styles[`status${agreement.status.charAt(0).toUpperCase() + agreement.status.slice(1)}`]
+                  (styles as any)[`status${agreement.status.charAt(0).toUpperCase() + agreement.status.slice(1)}`]
                 ]}>
                   {agreement.status.charAt(0).toUpperCase() + agreement.status.slice(1)}
                 </Text>
@@ -795,4 +795,3 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
 });
-

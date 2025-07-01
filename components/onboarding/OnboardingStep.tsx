@@ -15,10 +15,12 @@ export interface OnboardingStepProps {
   totalSteps: number;
   onNext?: () => void;
   onBack?: () => void;
+  onSkip?: () => void;
   nextButtonText?: string;
   backButtonText?: string;
   nextDisabled?: boolean;
   loading?: boolean;
+  showNextButton?: boolean;
 }
 
 export const OnboardingStep: React.FC<OnboardingStepProps> = ({
@@ -29,10 +31,12 @@ export const OnboardingStep: React.FC<OnboardingStepProps> = ({
   totalSteps,
   onNext,
   onBack,
+  onSkip,
   nextButtonText = 'Continue',
   backButtonText = 'Back',
   nextDisabled = false,
   loading = false,
+  showNextButton = true,
 }) => {
   const progress = (currentStep / totalSteps) * 100;
 
@@ -71,14 +75,23 @@ export const OnboardingStep: React.FC<OnboardingStepProps> = ({
             />
           )}
           
-          {onNext && (
+          {onSkip && (
+            <Button
+              title="Skip"
+              onPress={onSkip}
+              variant="outline"
+              style={styles.skipButton}
+            />
+          )}
+          
+          {onNext && showNextButton && (
             <Button
               title={nextButtonText}
               onPress={onNext}
               disabled={nextDisabled}
               loading={loading}
               style={styles.nextButton}
-              fullWidth={!onBack}
+              fullWidth={!onBack && !onSkip}
             />
           )}
         </View>
@@ -146,6 +159,10 @@ const styles = StyleSheet.create({
   },
   
   backButton: {
+    flex: 1,
+  },
+  
+  skipButton: {
     flex: 1,
   },
   

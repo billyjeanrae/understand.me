@@ -44,19 +44,19 @@ export default function CrossPlatformInput({
     switch (size) {
       case 'small':
         return {
-          height: touchTargetSize() * 0.8,
+          height: touchTargetSize * 0.8,
           fontSize: fontSize(14),
           paddingHorizontal: spacing(12),
         };
       case 'large':
         return {
-          height: touchTargetSize() * 1.2,
+          height: touchTargetSize * 1.2,
           fontSize: fontSize(18),
           paddingHorizontal: spacing(20),
         };
       default:
         return {
-          height: touchTargetSize(),
+          height: touchTargetSize,
           fontSize: fontSize(16),
           paddingHorizontal: spacing(16),
         };
@@ -120,7 +120,7 @@ export default function CrossPlatformInput({
         styles.inputContainer,
         sizeStyles,
         variantStyles,
-        PlatformUtils.isWeb && styles.webInputContainer,
+        ...(PlatformUtils.isWeb ? [styles.webInputContainer] : []),
         inputStyle
       ]}>
         {leftIcon && (
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   },
   webInputContainer: {
     // Web-specific input container styles
-    cursor: 'text',
+    cursor: 'text' as any,
   },
   input: {
     flex: 1,
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   },
   webInput: {
     // Web-specific input styles
-    outlineStyle: 'none',
+    outlineStyle: 'none' as any,
   },
   textArea: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -276,14 +276,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     // Remove default outline on web
     ...(PlatformUtils.isWeb && {
-      outlineStyle: 'none',
-      resize: 'vertical',
+      outlineStyle: 'none' as any,
+      resize: 'vertical' as any,
     }),
   },
   webTextArea: {
     // Web-specific textarea styles
-    outlineStyle: 'none',
-    resize: 'vertical',
+    outlineStyle: 'none' as any,
+    resize: 'vertical' as any,
   },
   iconContainer: {
     justifyContent: 'center',

@@ -135,8 +135,8 @@ export default function PersonalityAssessmentScreen() {
             name: user.name,
             username: user.username,
             personalityProfile: user.personalityProfile,
-            conflictStyle: user.conflictStyle,
-            goals: user.goals
+            communicationStyle: user.conflictStyle,
+            conflictHistory: []
           } : undefined
         }
       );

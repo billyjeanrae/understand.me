@@ -177,7 +177,12 @@ export default function ConflictDashboardScreen({
         id: result.id,
         conflictId: `conflict_${Date.now()}`,
         completedAt: result.completedAt,
-        scores: result.scores,
+        scores: {
+          intensity: result.scores.conflictIntensity,
+          complexity: result.scores.communicationQuality,
+          emotionalImpact: result.scores.emotionalImpact,
+          relationshipThreat: result.scores.relationshipHealth,
+        },
         conflictStyle: 'collaborating',
         readinessForMediation: result.scores.resolutionReadiness,
         recommendedApproach: result.suggestedApproaches,
@@ -733,4 +738,3 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
 });
-

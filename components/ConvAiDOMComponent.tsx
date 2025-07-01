@@ -67,7 +67,6 @@ export default function ConvAiDOMComponent({
 
 	return (
 		<Pressable
-			dom={dom}
 			style={[styles.callButton, conversation.status === 'connected' && styles.callButtonActive]}
 			onPress={conversation.status === 'disconnected' ? startConversation : stopConversation}
 		>

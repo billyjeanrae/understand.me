@@ -4,13 +4,30 @@ export class HumeService {
 	private client = new HumeClient({ apiKey: process.env.EXPO_PUBLIC_HUME_API_KEY });
 
 	async analyzeText(text: string) {
-		const resp = await this.client.empathicVoice.analyzeText({ text, models: ['language'] });
-		return resp;
+		try {
+			// Use the expression measurement API for text analysis
+			const resp = await this.client.expressionMeasurement.batch.startInferenceJob({
+				models: {
+					language: {}
+				},
+				text: [text]
+			});
+			return resp;
+		} catch (error) {
+			console.error('Error analyzing text:', error);
+			return null;
+		}
 	}
 
 	async analyzeEmotion(text: string) {
 		try {
-			const resp = await this.client.empathicVoice.analyzeText({ text, models: ['language'] });
+			// Use the expression measurement API for emotion analysis
+			const resp = await this.client.expressionMeasurement.batch.startInferenceJob({
+				models: {
+					language: {}
+				},
+				text: [text]
+			});
 			return resp;
 		} catch (error) {
 			console.error('Error analyzing emotion:', error);

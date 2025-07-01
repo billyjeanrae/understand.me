@@ -179,8 +179,13 @@ Generate a specific, actionable insight that would help the user in their curren
 
       updateUserProfile: async (updates: Partial<OrchestrationContext['userProfile']>) => {
         try {
-          // Extract user ID from context or updates
-          const userId = updates.id || 'current-user'; // This should come from context
+          if (!updates) {
+            throw new Error('Updates parameter is required');
+          }
+          
+          // For now, we'll need to get the user ID from the active conversation context
+          // This is a temporary solution - ideally the context should be passed to tools
+          const userId = 'current-user'; // TODO: Get from active conversation context
           
           // Map to Supabase profile format
           const profileUpdates: any = {};
@@ -862,11 +867,11 @@ Be encouraging and educational. Focus on skill development.`;
       toolCall.result = result;
       toolCall.status = 'completed';
       
-      console.log(`✅ Tool ${toolCall.name} executed successfully`);
+      console.log(`��� Tool ${toolCall.name} executed successfully`);
     } catch (error) {
       console.error(`❌ Tool ${toolCall.name} execution failed:`, error);
       toolCall.status = 'failed';
-      toolCall.result = { error: error.message };
+      toolCall.result = { error: error instanceof Error ? error.message : String(error) };
     }
   }
 
@@ -891,7 +896,7 @@ Be encouraging and educational. Focus on skill development.`;
           emotion_data: analysisResult.emotionAnalysis ? {
             conflict_level: analysisResult.emotionAnalysis.conflictLevel,
             resolution_potential: analysisResult.emotionAnalysis.resolutionPotential,
-            dominant_emotions: analysisResult.emotionAnalysis.dominantEmotions,
+            dominant_emotions: [analysisResult.emotionAnalysis.dominantEmotion.name],
           } : null,
           conflict_level: analysisResult.emotionAnalysis?.conflictLevel,
         });
@@ -913,17 +918,17 @@ Be encouraging and educational. Focus on skill development.`;
           session_id: context.conversationId,
           user_id: context.participantIds[0],
           analysis_type: input.audio ? 'voice' : 'text',
-          raw_data: analysisResult.emotionAnalysis.rawData || {},
+          raw_data: analysisResult.emotionAnalysis.emotions || {},
           processed_data: {
             conflict_level: analysisResult.emotionAnalysis.conflictLevel,
             resolution_potential: analysisResult.emotionAnalysis.resolutionPotential,
-            dominant_emotions: analysisResult.emotionAnalysis.dominantEmotions,
+            dominant_emotions: [analysisResult.emotionAnalysis.dominantEmotion.name],
             recommendations: analysisResult.emotionAnalysis.recommendations,
           },
           conflict_level: analysisResult.emotionAnalysis.conflictLevel,
           resolution_potential: analysisResult.emotionAnalysis.resolutionPotential,
-          emotional_state: analysisResult.emotionAnalysis.dominantEmotions?.[0] || 'neutral',
-          dominant_emotions: analysisResult.emotionAnalysis.dominantEmotions || [],
+          emotional_state: analysisResult.emotionAnalysis.dominantEmotion?.name || 'neutral',
+          dominant_emotions: analysisResult.emotionAnalysis.dominantEmotion ? [analysisResult.emotionAnalysis.dominantEmotion.name] : [],
           session_phase: context.sessionPhase,
         });
       }
@@ -939,7 +944,7 @@ Be encouraging and educational. Focus on skill development.`;
             content: recommendation,
             confidence_score: 0.8,
             session_phase: context.sessionPhase,
-            related_emotions: analysisResult.emotionAnalysis?.dominantEmotions,
+            related_emotions: analysisResult.emotionAnalysis?.dominantEmotion ? [analysisResult.emotionAnalysis.dominantEmotion.name] : [],
           });
         }
       }

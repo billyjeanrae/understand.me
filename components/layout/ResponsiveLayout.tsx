@@ -43,7 +43,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
   ];
 
   return (
-    <View style={containerStyle}>
+    <View style={StyleSheet.flatten(containerStyle)}>
       {children}
     </View>
   );

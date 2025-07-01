@@ -489,7 +489,7 @@ function NoteEditorModal({ visible, note, categories, onClose, onSave }: NoteEdi
   const { spacing, fontSize } = useResponsive();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [category, setCategory] = useState('general');
+  const [category, setCategory] = useState<'observation' | 'action_item' | 'breakthrough' | 'concern' | 'general'>('general');
   const [tags, setTags] = useState('');
 
   useEffect(() => {
@@ -563,7 +563,7 @@ function NoteEditorModal({ visible, note, categories, onClose, onSave }: NoteEdi
                           { padding: spacing(12) },
                           isSelected && { borderColor: cat.color, backgroundColor: `${cat.color}20` }
                         ]}
-                        onPress={() => setCategory(cat.id)}
+                        onPress={() => setCategory(cat.id as 'observation' | 'action_item' | 'breakthrough' | 'concern' | 'general')}
                       >
                         <IconComponent 
                           size={20} 

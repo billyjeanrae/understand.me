@@ -23,6 +23,24 @@ import {
   ChevronRight
 } from 'lucide-react-native';
 
+interface SettingItem {
+  id: string;
+  title: string;
+  description: string;
+  type: 'switch' | 'navigation' | 'action';
+  value?: any;
+  onToggle?: (value: boolean) => void;
+  onPress?: () => void;
+  disabled?: boolean;
+  destructive?: boolean;
+}
+
+interface SettingSection {
+  title: string;
+  icon: React.ReactNode;
+  items: SettingItem[];
+}
+
 export default function SettingsScreen() {
   const { spacing, fontSize } = useResponsive();
   const router = useRouter();
@@ -89,7 +107,7 @@ export default function SettingsScreen() {
     }));
   };
 
-  const settingSections = [
+  const settingSections: SettingSection[] = [
     {
       title: 'Notifications',
       icon: <Bell size={24} color="#10B981" strokeWidth={2} />,

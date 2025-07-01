@@ -22,6 +22,8 @@ export interface OnboardingData {
   personalityAnswers?: Record<string, any>;
   personalityProfile?: any;
   personalityAssessmentCompleted?: boolean;
+  voiceOnboardingSkipped?: boolean;
+  voiceOnboardingCompleted?: boolean;
   currentStep?: number;
 }
 

@@ -10,7 +10,7 @@ import { useResponsive } from '../../utils/platform';
 
 export default function MainDashboard() {
   const [userProfile, setUserProfile] = useState<any>(null);
-  const { setUser } = useAuthStore();
+  const { logout } = useAuthStore();
   const [badgeScale] = useState(new Animated.Value(1));
   const { breakpoint, isWeb, spacing, fontSize } = useResponsive();
 
@@ -29,7 +29,7 @@ export default function MainDashboard() {
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut();
-      setUser(null);
+      logout();
       router.replace('/(auth)/login');
     } catch (error) {
       console.error('Error signing out:', error);

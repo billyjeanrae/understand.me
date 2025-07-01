@@ -68,7 +68,7 @@ export default function ProfileManagement({ onClose }: ProfileManagementProps) {
     setFormData(prev => ({
       ...prev,
       [section]: {
-        ...prev[section],
+        ...(prev[section] as any),
         [field]: value,
       },
     }));
@@ -733,4 +733,3 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-

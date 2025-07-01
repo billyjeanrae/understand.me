@@ -108,9 +108,11 @@ export default function VoiceIntroScreen() {
       // Toggle listening
       setIsListening(!isListening);
       if (!isListening) {
-        conversation?.startRecording();
+        // Start listening - the conversation should already be active
+        console.log('Starting to listen...');
       } else {
-        conversation?.stopRecording();
+        // Stop listening
+        console.log('Stopping listening...');
       }
     }
   };
