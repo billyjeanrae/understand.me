@@ -446,7 +446,7 @@ const styles = StyleSheet.create({
   progressBar: {
     width: '100%',
     height: 4,
-    backgroundColor: Colors.neutral.light,
+    backgroundColor: Colors.border.light,
     borderRadius: 2,
     overflow: 'hidden',
   },
@@ -530,7 +530,7 @@ const styles = StyleSheet.create({
   eiBar: {
     flex: 1,
     height: 8,
-    backgroundColor: Colors.neutral.light,
+    backgroundColor: Colors.border.light,
     borderRadius: 4,
     overflow: 'hidden',
   },
